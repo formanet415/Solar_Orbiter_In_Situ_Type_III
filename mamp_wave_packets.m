@@ -33,7 +33,7 @@ mlen=50;
 plot(mep(1:mlen),mdt(1,1:mlen),'-k')
 ylabel('Electric field intensity [V/m]')
 legend('waveform', 'mamp')
-title(sprintf('TDS %s snapshot from %s', type,datestr(dt.epoch(index))))
+title(sprintf('TDS %s snapshot from %s; samp rate %ikHz', type,datestr(dt.epoch(index)),fix(dt.samp_rate(index)/1000)))
 hold off
 print(gcf,sprintf('plots/mamp_waveform_%s_%s_%i.png', type, datestr(dt.epoch(index),'yyyy_mm_dd'),index),'-dpng','-r300');
 end
