@@ -1,4 +1,4 @@
 
 *.asv
 plots/*
-events/*/*.png
+events/20*/*.png
