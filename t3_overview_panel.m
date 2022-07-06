@@ -11,6 +11,7 @@ rtime1 = rtime0 + 2/12 - 1/48;
 ridxs = r0:r1;
 for i = 1:length(ridxs)
     % add projection onto B field or at least convert to SRF
+    srfuu = convert_to_SRF(rswf,ridxs(i));  % This takes samps_per_ch into account
     [sp, fq, nav] = make_spectrum(uu, wnd_size, dt, maxfq, ovrlp);
 end
 [sp, fq, nav] = make_spectrum(uu, wnd_size, dt, maxfq, ovrlp);
