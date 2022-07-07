@@ -31,6 +31,6 @@ nsamp = double(data.samples_per_ch(index));
 ww = data.data(:,1:nsamp,index);
 % projection: E = MAT(ANT->SRF) * V; where MAT(2,2) and V is observed field
 M = inv(M);
-E = M*ww(1:2,:) * 1e3; % transformation into SRF (Y-Z) and mV/m
+E = M*ww(1:2,:); % transformation into SRF (Y-Z) this is (V/m)
 
 
