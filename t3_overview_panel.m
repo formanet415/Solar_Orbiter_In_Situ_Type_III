@@ -99,8 +99,10 @@ else
 end
 
 
-disp('xd')
-exportgraphics(gcf, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))],'Resolution','300')
+f = gcf;
+f.Position = [100 100 1700 1000];
+saveas(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+%exportgraphics(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))],'Resolution','300')
 
 end
 
