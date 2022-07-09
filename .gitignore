@@ -3,3 +3,4 @@
 plots/*
 events/20*/*.png
 events/all/*.png
+overview plots/*.png
