@@ -53,16 +53,19 @@ nsplts = 5; %number of subplots
 
 
 subplot(nsplts,1,1);    % RSWF spectrogram from L2 data
+ylim auto
 opts.colorax = [-16,-9];
 hcbar = plot_spectrogram(sps',fq,tt,opts);
 xlim([rtime0,rtime1])
 title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
 cb=colorbar;
 cb.Position=[0.91,0.77,0.01,0.16];
-xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
+ylim manual
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 subplot(nsplts,1,2);    % EPD STEP panel
+ylim auto
 if rtime0<datenum(2021,10,22)
 solo_panel_epd_step_rates_spectrum(rtime0,4*60*60)
 elseif rtime0>datenum(2021,10,22)
@@ -71,10 +74,12 @@ end
 xlim([rtime0,rtime1])
 
 [pastt,pasden] = caadb_get_solo_swa_pas_moments(rtime0,4*60*60);
-xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
+ylim manual
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 subplot(nsplts,1,3)     % Plasma density
+ylim auto
 hold off
 
 plot(pastt,pasden,'r','DisplayName','PAS density')
@@ -96,10 +101,12 @@ datetick()
 ylabel('Density [cm^-3]')
 xlim([rtime0,rtime1])
 l = legend('AutoUpdate','off');
-xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
+ylim manual
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 subplot(nsplts,1,4)     % Magnetic field cone angle (tbd more about B field)
+ylim auto
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 if ~isempty(ep)
     coneang = rad2deg(acos(b_vec(1,:)./vecnorm(b_vec)));
@@ -113,11 +120,12 @@ else
     title('no MAG data')
     xlim([rtime0,rtime1])
 end
-xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
+ylim manual
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 subplot(nsplts,1,5)     % Statistics from TSWF 
-% TBD
+ylim auto
 tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
 if ~isnan(tswf_idx(1))
     tswftt = [];
@@ -144,6 +152,8 @@ else
     xlim([rtime0,rtime1])
     datetick('Keeplimits');
 end
+ylim manual
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 f = gcf;
