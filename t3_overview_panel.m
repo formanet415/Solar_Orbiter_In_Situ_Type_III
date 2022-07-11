@@ -118,6 +118,33 @@ xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
 
 subplot(nsplts,1,5)     % Statistics from TSWF 
 % TBD
+tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
+if ~isnan(tswf_idx(1))
+    tswftt = [];
+    tswffq = [];
+    for i = tswf_idx
+        if isnan(i)
+            continue
+        end
+        wf = tswf.data(1,1:tswf.samples_per_ch(i),i);
+        [sp, fq, nav] = make_spectrum(wf, length(wf)/8, 1/tswf.samp_rate(i));
+        tswftt(end+1) = tswf.epoch(i);
+        [~, j] = max(sp);
+        tswffq(end+1) = fq(j);
+    end
+
+    plot(tswftt,tswffq*1e-3,'o')
+    xlim([rtime0,rtime1])
+    datetick('Keeplimits');
+    ylim([0,100])
+    ylabel('frequency [kHz]')
+    title('TSWF Langmuir wave frequencies')
+else
+    title('No Langmuir waves recorded in TSWF')
+    xlim([rtime0,rtime1])
+    datetick('Keeplimits');
+end
+
 
 f = gcf;
 f.Position = [100 100 1700 1300];

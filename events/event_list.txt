@@ -39,7 +39,7 @@ year	month	day	tds-h	tds-m	epd-nxt epd-h	epd-m	tswfnxt	tswf	fq[kHz]	rswfnxt	rswf
 2021	7	24	0	12	0	0	52	0	22:33	28	0	1	40
 2021	8	17	11	0	0	11	35	0	nan	nan	0	nan	nan
 2021	8	24	13	25	0	13	20	0	113:130	37	0	nan	nan
-2021	8	26	3	55	0	4	33	0	65,67,71:77	52	0	4	10
+2021	8	26	3	55	0	4	34	0	65,67,71:77	52	0	4	10
 2021	8	26	18	30	0	18	30	0	297:315	45	0	18	50
 2021	9	22	18	20	0	19	35	0	nan	nan	0	nan	nan
 2021	9	23	15	40	0	17	0	0	nan	nan	0	nan	nan
