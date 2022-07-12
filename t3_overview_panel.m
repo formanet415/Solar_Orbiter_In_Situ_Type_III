@@ -14,17 +14,7 @@ ridxs = r0:r1;
 for i = 1:length(ridxs)
     
     srfuu = convert_to_SRF(rswf,ridxs(i));  % This takes samps_per_ch into account
-    
-    % commented an example of conversion to B paralell and B perpendicular
-    %srfuu(1:2,:) = rswf.data(1:2,:,i);
-    %[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(datenum(year,month,day),1,'srf');
-    %b = b_vec(:,1);
-    %bp = b(2:3);
-    %bpn = bp/sqrt(bp'*bp);
-    %bper = (srfuu'*bpn)';
-    %bort = ([bpn(2),-bpn(1)]*srfuu);
-    %[spz, fq, nav] = make_spectrum(srfuu(2,:), length(srfuu(2,:)), 1/rswf.samp_rate(ridxs(i)));
-    
+        
     [sp, fq, nav] = make_spectrum(srfuu, length(srfuu(1,:))/8, 1/rswf.samp_rate(ridxs(i)),rswf.samp_rate(ridxs(i))/2);
     
     temp = sum(squeeze(sp)');
@@ -60,6 +50,31 @@ xlim([rtime0,rtime1])
 title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
 cb=colorbar;
 cb.Position=[0.91,0.77,0.01,0.16];
+hold on
+tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
+if ~isnan(tswf_idx(1))
+    tswftt = [];
+    tswffq = [];
+    for i = tswf_idx
+        if isnan(i)
+            continue
+        end
+        wf = tswf.data(1,1:tswf.samples_per_ch(i),i);
+        [sp, fq, nav] = make_spectrum(wf, length(wf)/8, 1/tswf.samp_rate(i));
+        tswftt(end+1) = tswf.epoch(i);
+        [~, j] = max(sp);
+        tswffq(end+1) = fq(j);
+    end
+
+    plot(tswftt,tswffq,'r*')
+    datetick('Keeplimits');
+    ylabel('frequency [kHz]')
+    title('TSWF Langmuir wave frequencies')
+else
+    title('No Langmuir waves recorded in TSWF')
+    datetick('Keeplimits');
+end
+
 ylim manual
 line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
@@ -107,6 +122,7 @@ line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_n
 %xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
 
 subplot(nsplts,1,4)     % Magnetic field cone angle (tbd more about B field)
+hold off
 ylim auto
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 if ~isempty(ep)
@@ -136,44 +152,43 @@ else
     line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 end
 datetick('Keeplimits');
-hold off
 
-subplot(nsplts,1,5)     % Statistics from TSWF 
-ylim auto
-tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
+
+subplot(nsplts,1,5)     % E perpendicular / E total 
+
+% commented an example of conversion to B paralell and B perpendicular
 if ~isnan(tswf_idx(1))
-    tswftt = [];
-    tswffq = [];
+    f = [];
+    fep=[];
     for i = tswf_idx
         if isnan(i)
             continue
         end
-        wf = tswf.data(1,1:tswf.samples_per_ch(i),i);
-        [sp, fq, nav] = make_spectrum(wf, length(wf)/8, 1/tswf.samp_rate(i));
-        tswftt(end+1) = tswf.epoch(i);
-        [~, j] = max(sp);
-        tswffq(end+1) = fq(j);
-    end
+        srfwf(1:2,:) = convert_to_SRF(tswf,i);
+        [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i),1,'srf');
+        if isempty(b_vec)
+            continue
+        end
+        b = srf_b_vec(:,1);
+        bp = b(2:3);
+        bpn = bp/sqrt(bp'*bp);
+        bper = (srfuu'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
+        bort = ([bpn(2),-bpn(1)]*srfuu);
+        f(end+1) = std(bort)^2/(std(bort)^2+std(bper)^2);
+        fep(end+1) = tswf.epoch(i);
+        %[spz, fq, nav] = make_spectrum(srfuu(2,:), length(srfuu(2,:)), 1/tswf.samp_rate(ridxs(i)));
 
-    plot(tswftt,tswffq*1e-3,'o')
-    xlim([rtime0,rtime1])
-    datetick('Keeplimits');
-    ylim([0,100])
-    ylabel('frequency [kHz]')
-    title('TSWF Langmuir wave frequencies')
-else
-    title('No Langmuir waves recorded in TSWF')
+    end
+    plot(fep, f,'b.')
     xlim([rtime0,rtime1])
     datetick('Keeplimits');
 end
-ylim manual
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
 f = gcf;
 f.Position = [100 100 1700 1300];
 saveas(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
 %exportgraphics(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))],'Resolution','300')
-
+close(f)
 end
 
