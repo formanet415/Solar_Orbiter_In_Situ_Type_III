@@ -101,28 +101,42 @@ datetick()
 ylabel('Density [cm^-3]')
 xlim([rtime0,rtime1])
 l = legend('AutoUpdate','off');
-ylim manual
+%ylim manual
+ylim(get(gca, 'ylim'))
 line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
-
+%xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
 
 subplot(nsplts,1,4)     % Magnetic field cone angle (tbd more about B field)
 ylim auto
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 if ~isempty(ep)
+    yyaxis right
+    ntb=b_vec(2:3,:);
+    CosTheta = max(min(ntb(1,:)/(norm(ntb)),1),-1);
+    ThetaInDegrees = real(acosd(CosTheta));
+    plot(ep,ThetaInDegrees,'Displayname','RTN clock angle')
+    
+    yyaxis left
+    ylim manual
+    ylim([0 180])
+    hold on
     coneang = rad2deg(acos(b_vec(1,:)./vecnorm(b_vec)));
-    plot(ep, coneang,'b','Displayname','RTN cone angle')
-    datetick()
+    plot(ep, coneang,'b-','Displayname','RTN cone angle')
+    datetick('Keeplimits');
     xlim([rtime0,rtime1])
     ylabel('cone angle [deg]')
+    title('MAG RTN angles')
+    
     legend('AutoUpdate','off')
-    title('MAG RTN cone angle')
+    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], [0 180], 'Color', 'black');
 else
     title('no MAG data')
     xlim([rtime0,rtime1])
+    ylim manual
+    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 end
-ylim manual
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
-
+datetick('Keeplimits');
+hold off
 
 subplot(nsplts,1,5)     % Statistics from TSWF 
 ylim auto
