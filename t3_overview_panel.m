@@ -37,19 +37,22 @@ if r1 == length(rswf.epoch)
     end
 end
 
-nsplts = 5; %number of subplots
+nsplts = 6;             % number of subplots
+osplts = [2 3 4 5 6 1]; % order of subplots
 
+opts.show_xlabel = 0;
+subplot(nsplts,1,osplts(6))
+solo_panel_tnr_spectrum(rtime0,4*3600,4,opts);
+xlim([rtime0,rtime1])
 
-
-
-subplot(nsplts,1,1);    % RSWF spectrogram from L2 data
+subplot(nsplts,1,osplts(1));    % RSWF spectrogram from L2 data
 ylim auto
 opts.colorax = [-16,-9];
 hcbar = plot_spectrogram(sps',fq,tt,opts);
 xlim([rtime0,rtime1])
 title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
 cb=colorbar;
-cb.Position=[0.91,0.77,0.01,0.16];
+cb.Position=[0.91,0.688,0.01,0.09];
 hold on
 tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
 if ~isnan(tswf_idx(1))
@@ -79,7 +82,7 @@ ylim manual
 line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
-subplot(nsplts,1,2);    % EPD STEP panel
+subplot(nsplts,1,osplts(2));    % EPD STEP panel
 ylim auto
 if rtime0<datenum(2021,10,22)
 solo_panel_epd_step_rates_spectrum(rtime0,4*60*60)
@@ -93,7 +96,7 @@ ylim manual
 line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 
 
-subplot(nsplts,1,3)     % Plasma density
+subplot(nsplts,1,osplts(3))     % Plasma density
 ylim auto
 hold off
 
@@ -121,7 +124,7 @@ ylim(get(gca, 'ylim'))
 line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 %xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
 
-subplot(nsplts,1,4)     % Magnetic field cone angle (tbd more about B field)
+subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
 hold off
 ylim auto
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
@@ -130,7 +133,10 @@ if ~isempty(ep)
     ntb=b_vec(2:3,:);
     CosTheta = max(min(ntb(1,:)/(norm(ntb)),1),-1);
     ThetaInDegrees = real(acosd(CosTheta));
-    plot(ep,ThetaInDegrees,'Displayname','RTN clock angle')
+    plot(ep,ThetaInDegrees,'Color','#d95319','Displayname','RTN clock angle')
+    set(gca, 'Ycolor', '#d95319')
+    ylabel('clock angle [deg]')
+    legend('Location','northeast')
     
     yyaxis left
     ylim manual
@@ -143,7 +149,12 @@ if ~isempty(ep)
     ylabel('cone angle [deg]')
     title('MAG RTN angles')
     
-    legend('AutoUpdate','off')
+    if strcmp(version,'9.11.0.1769968 (R2021b)')
+        legend('AutoUpdate','off','Location','northeast')
+    else
+        legend('AutoUpdate','off','Location','northwest')
+    end
+    
     line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], [0 180], 'Color', 'black');
 else
     title('no MAG data')
@@ -154,7 +165,7 @@ end
 datetick('Keeplimits');
 
 
-subplot(nsplts,1,5)     % E perpendicular / E total 
+subplot(nsplts,1,osplts(5))     % E perpendicular / E total 
 
 % commented an example of conversion to B paralell and B perpendicular
 if ~isnan(tswf_idx(1))
@@ -182,6 +193,9 @@ if ~isnan(tswf_idx(1))
     plot(fep, f,'b.')
     xlim([rtime0,rtime1])
     datetick('Keeplimits');
+    ylim([0,1])
+    title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
+    ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
 end
 
 
