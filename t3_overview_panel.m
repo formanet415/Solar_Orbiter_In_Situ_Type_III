@@ -40,15 +40,17 @@ end
 nsplts = 6;             % number of subplots
 osplts = [2 3 4 5 6 1]; % order of subplots
 
-opts.show_xlabel = 0;
+
+opts.show_xlabel = 0;           % TNR spectrogram
 subplot(nsplts,1,osplts(6))
 solo_panel_tnr_spectrum(rtime0,4*3600,4,opts);
 xlim([rtime0,rtime1])
 
+
 subplot(nsplts,1,osplts(1));    % RSWF spectrogram from L2 data
 ylim auto
 opts.colorax = [-16,-9];
-hcbar = plot_spectrogram(sps',fq,tt,opts);
+hcbar = plot_spectrogram(sps',fq*1e-3,tt,opts);
 xlim([rtime0,rtime1])
 title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
 cb=colorbar;
@@ -69,7 +71,7 @@ if ~isnan(tswf_idx(1))
         tswffq(end+1) = fq(j);
     end
 
-    plot(tswftt,tswffq,'r*')
+    plot(tswftt,tswffq*1e-3,'r*')
     datetick('Keeplimits');
     ylabel('frequency [kHz]')
     title('TSWF Langmuir wave frequencies')
