@@ -45,6 +45,9 @@ opts.show_xlabel = 0;           % TNR spectrogram
 subplot(nsplts,1,osplts(6))
 solo_panel_tnr_spectrum(rtime0,4*3600,4,opts);
 xlim([rtime0,rtime1])
+line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+ylim([7 1000])
+
 
 
 subplot(nsplts,1,osplts(1));    % RSWF spectrogram from L2 data
@@ -202,6 +205,7 @@ if ~isnan(tswf_idx(1))
     ylim([0,1])
     title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
     ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
+    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
 end
 
 
