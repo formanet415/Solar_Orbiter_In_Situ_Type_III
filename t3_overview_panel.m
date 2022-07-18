@@ -45,7 +45,7 @@ opts.show_xlabel = 0;           % TNR spectrogram
 subplot(nsplts,1,osplts(6))
 solo_panel_tnr_spectrum(rtime0,4*3600,4,opts);
 xlim([rtime0,rtime1])
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 ylim([7 1000])
 
 
@@ -84,7 +84,7 @@ else
 end
 
 ylim manual
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
 
 subplot(nsplts,1,osplts(2));    % EPD STEP panel
@@ -98,7 +98,7 @@ xlim([rtime0,rtime1])
 
 [pastt,pasden] = caadb_get_solo_swa_pas_moments(rtime0,4*60*60);
 ylim manual
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
 
 subplot(nsplts,1,osplts(3))     % Plasma density
@@ -126,8 +126,7 @@ xlim([rtime0,rtime1])
 l = legend('AutoUpdate','off');
 %ylim manual
 ylim(get(gca, 'ylim'))
-line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
-%xline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0));
+vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
 subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
 hold off
@@ -162,12 +161,12 @@ if ~isempty(ep)
     %    legend('AutoUpdate','off','Location','northwest')
     %end
     
-    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], [0 180], 'Color', 'black');
+    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 else
     title('no MAG data')
     xlim([rtime0,rtime1])
     ylim manual
-    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 end
 datetick('Keeplimits');
 
@@ -203,7 +202,7 @@ if ~isnan(tswf_idx(1))
     ylim([0,1])
     title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
     ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
-    line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], get(gca, 'ylim'), 'Color', 'black');
+    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 end
 
 
