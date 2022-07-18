@@ -76,13 +76,21 @@ if ~isnan(tswf_idx(1))
         [~, j] = max(sp);
         tswffq(end+1) = fq(j);
     end
+    [ep,dt] = caadb_get_solo_tds_stat(rtime0,4*60*60);
+    plot(ep,dt.wa_med_freq*1e-3,'^','Color','magenta')
+
 
     plot(tswftt,tswffq*1e-3,'r*')
     datetick('Keeplimits');
     ylabel('frequency [kHz]')
-    title('TSWF Langmuir wave frequencies')
+    %title('TSWF Langmuir wave frequencies')
+    legend('STAT wave frequency', 'Frequency from TSWF','AutoUpdate','off')
 else
-    title('No Langmuir waves recorded in TSWF')
+    %title('No Langmuir waves recorded in TSWF')
+    [ep,dt] = caadb_get_solo_tds_stat(rtime0,4*60*60);
+    plot(ep,dt.wa_med_freq*1e-3,'^','Color','magenta')
+    legend('STAT wave frequency','AutoUpdate','off')
+
     datetick('Keeplimits');
 end
 
