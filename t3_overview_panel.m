@@ -89,10 +89,11 @@ vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
 subplot(nsplts,1,osplts(2));    % EPD STEP panel
 ylim auto
+tmpopts.show_xlabel = 0;
 if rtime0<datenum(2021,10,22)
-solo_panel_epd_step_rates_spectrum(rtime0,4*60*60)
+solo_panel_epd_step_rates_spectrum(rtime0,4*60*60,'electrons',tmpopts)
 elseif rtime0>datenum(2021,10,22)
-    solo_panel_epd_step_main_spectrum(rtime0,4*60*60)
+    solo_panel_epd_step_main_spectrum(rtime0,4*60*60,'electrons',tmpopts)
 end
 xlim([rtime0,rtime1])
 
