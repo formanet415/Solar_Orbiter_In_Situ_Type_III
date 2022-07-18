@@ -196,18 +196,18 @@ if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
             continue
         end
         srfwf(1:2,:) = convert_to_SRF(tswf,i);
-        [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i),1,'srf');
-        if isempty(b_vec)
+        [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i)-0.25/(86400),0.5,'srf');
+        if isempty(srf_b_vec)
             continue
         end
-        b = srf_b_vec(:,1);
+        b = mean(srf_b_vec,2);
         bp = b(2:3);
         bpn = bp/sqrt(bp'*bp);
         bper = (srfuu'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
         bort = ([bpn(2),-bpn(1)]*srfuu);
         f(end+1) = std(bort)^2/(std(bort)^2+std(bper)^2);
         fep(end+1) = tswf.epoch(i);
-        %[spz, fq, nav] = make_spectrum(srfuu(2,:), length(srfuu(2,:)), 1/tswf.samp_rate(ridxs(i)));
+        
 
     end
     plot(fep, f,'b.')
