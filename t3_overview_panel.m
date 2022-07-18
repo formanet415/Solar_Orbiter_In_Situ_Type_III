@@ -136,13 +136,11 @@ ylim auto
 if ~isempty(ep)
     yyaxis right
     ntb=b_vec(2:3,:);
-    CosTheta = max(min(ntb(1,:)/(norm(ntb)),1),-1);
-    ThetaInDegrees = real(acosd(CosTheta));
-
-    % Convert color code to 1-by-3 RGB array (0~1 each)
-    str = '#d95319';
-    color = sscanf(str(2:end),'%2x%2x%2x',[1 3])/255;
-    plot(ep,ThetaInDegrees,'Color',color,'Displayname','RTN clock angle')
+    CosTheta = ntb(1,:)./(vecnorm(ntb));
+    ThetaInDegrees = real(acosd(CosTheta)).*sign(ntb(2,:));
+    color = [0.8500 0.3250 0.0980];
+    plot(ep,ThetaInDegrees,'.','Color',color,'Markersize',1,'Displayname','RTN clock angle')
+    ylim([-180 180])
     set(gca, 'Ycolor', color)
     ylabel('clock angle [deg]')
     legend('Location','northeast')
@@ -158,11 +156,11 @@ if ~isempty(ep)
     ylabel('cone angle [deg]')
     title('MAG RTN angles')
     
-    if strcmp(version,'9.11.0.1769968 (R2021b)')
-        legend('AutoUpdate','off','Location','northeast')
-    else
-        legend('AutoUpdate','off','Location','northwest')
-    end
+    %if strcmp(version,'9.11.0.1769968 (R2021b)')
+    %    legend('AutoUpdate','off','Location','northeast')
+    %else
+    %    legend('AutoUpdate','off','Location','northwest')
+    %end
     
     line([datenum(year,month,day+epd_nxt,epd_h,epd_m,0) datenum(year,month,day+epd_nxt,epd_h,epd_m,0)], [0 180], 'Color', 'black');
 else
