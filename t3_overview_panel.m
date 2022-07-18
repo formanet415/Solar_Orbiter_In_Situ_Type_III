@@ -143,7 +143,7 @@ if ~isempty(ep)
     ylim([-180 180])
     set(gca, 'Ycolor', color)
     ylabel('clock angle [deg]')
-    legend('Location','northeast')
+    %legend('Location','northeast')
     
     yyaxis left
     ylim manual
