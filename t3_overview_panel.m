@@ -40,6 +40,10 @@ if r1 == length(rswf.epoch)
 end
 
 nsplts = 6;             % number of subplots
+[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
+if isempty(b_vec)
+    nsplts = 4;
+end
 osplts = [2 3 4 5 6 1]; % order of subplots
 
 
@@ -140,11 +144,12 @@ l = legend('AutoUpdate','off');
 ylim(get(gca, 'ylim'))
 vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
+[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
+if ~isempty(ep)
 subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
 hold off
 ylim auto
-[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
-if ~isempty(ep)
+
     yyaxis right
     ntb=b_vec(2:3,:);
     CosTheta = ntb(1,:)./(vecnorm(ntb));
@@ -174,13 +179,10 @@ if ~isempty(ep)
     %end
     
     vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
-else
-    title('no MAG data')
-    xlim([rtime0,rtime1])
-    ylim manual
-    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
-end
-datetick('Keeplimits');
+    datetick('Keeplimits');
+
+
+
 
 
 subplot(nsplts,1,osplts(5))     % E perpendicular / E total 
@@ -216,7 +218,7 @@ if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
     ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
     vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 end
-
+end
 
 f = gcf;
 f.Position = [100 100 1700 1300];
