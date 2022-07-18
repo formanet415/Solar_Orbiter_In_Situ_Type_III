@@ -3,6 +3,8 @@ function t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_n
 %them and saves panels with the data
 
 caa_data_paths;
+subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
+
 
 rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
 rtime0 = datenum(year, month, day, h, m, 0) - 1/48;
@@ -56,8 +58,9 @@ opts.colorax = [-16,-9];
 hcbar = plot_spectrogram(sps',fq*1e-3,tt,opts);
 xlim([rtime0,rtime1])
 title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
-cb=colorbar;
-cb.Position=[0.91,0.688,0.01,0.09];
+colorbar('off');
+%cb=colorbar;
+%cb.Position=[0.91,0.688,0.01,0.09];
 hold on
 tswf=tdscdf_load_l2_surv_tswf(datenum(year,month,day+tswf_nxt));
 if ~isnan(tswf_idx(1))
@@ -175,7 +178,7 @@ datetick('Keeplimits');
 subplot(nsplts,1,osplts(5))     % E perpendicular / E total 
 
 % commented an example of conversion to B paralell and B perpendicular
-if ~isnan(tswf_idx(1))
+if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
     f = [];
     fep=[];
     for i = tswf_idx
