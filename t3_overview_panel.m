@@ -14,11 +14,11 @@ rtime1 = rtime0 + 2/12 - 1/48;
 
 ridxs = r0:r1;
 for i = 1:length(ridxs)
-    
+
     srfuu = convert_to_SRF(rswf,ridxs(i));  % This takes samps_per_ch into account
-        
+
     [sp, fq, nav] = make_spectrum(srfuu, length(srfuu(1,:))/8, 1/rswf.samp_rate(ridxs(i)),rswf.samp_rate(ridxs(i))/2);
-    
+
     temp = sum(squeeze(sp)');
     sps(i,1:length(temp)) = temp; % handles changes in samp rate
     tt(i) = rswf.epoch(ridxs(i));
@@ -106,7 +106,7 @@ subplot(nsplts,1,osplts(2));    % EPD STEP panel
 ylim auto
 tmpopts.show_xlabel = 0;
 if rtime0<datenum(2021,10,22)
-solo_panel_epd_step_rates_spectrum(rtime0,4*60*60,'electrons',tmpopts)
+    solo_panel_epd_step_rates_spectrum(rtime0,4*60*60,'electrons',tmpopts)
 elseif rtime0>datenum(2021,10,22)
     solo_panel_epd_step_main_spectrum(rtime0,4*60*60,'electrons',tmpopts)
 end
@@ -146,9 +146,9 @@ vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
 
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 if ~isempty(ep)
-subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
-hold off
-ylim auto
+    subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
+    hold off
+    ylim auto
 
     yyaxis right
     ntb=b_vec(2:3,:);
@@ -160,7 +160,7 @@ ylim auto
     set(gca, 'Ycolor', color)
     ylabel('clock angle [deg]')
     %legend('Location','northeast')
-    
+
     yyaxis left
     ylim manual
     ylim([0 180])
@@ -171,13 +171,13 @@ ylim auto
     xlim([rtime0,rtime1])
     ylabel('cone angle [deg]')
     title('MAG RTN angles')
-    
+
     %if strcmp(version,'9.11.0.1769968 (R2021b)')
     %    legend('AutoUpdate','off','Location','northeast')
     %else
     %    legend('AutoUpdate','off','Location','northwest')
     %end
-    
+
     vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
     datetick('Keeplimits');
 
@@ -185,39 +185,39 @@ ylim auto
 
 
 
-subplot(nsplts,1,osplts(5))     % E perpendicular / E total 
+    subplot(nsplts,1,osplts(5))     % E perpendicular / E total
 
-% commented an example of conversion to B paralell and B perpendicular
-if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
-    f = [];
-    fep=[];
-    for i = tswf_idx
-        if isnan(i)
-            continue
-        end
-        srfwf(1:2,:) = convert_to_SRF(tswf,i);
-        [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i)-0.25/(86400),0.5,'srf');
-        if isempty(srf_b_vec)
-            continue
-        end
-        b = mean(srf_b_vec,2);
-        bp = b(2:3);
-        bpn = bp/sqrt(bp'*bp);
-        bper = (srfuu'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
-        bort = ([bpn(2),-bpn(1)]*srfuu);
-        f(end+1) = std(bort)^2/(std(bort)^2+std(bper)^2);
-        fep(end+1) = tswf.epoch(i);
-        
+    % commented an example of conversion to B paralell and B perpendicular
+    if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
+        f = [];
+        fep=[];
+        for i = tswf_idx
+            if isnan(i)
+                continue
+            end
+            srfwf(1:2,:) = convert_to_SRF(tswf,i);
+            [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i)-0.25/(86400),0.5,'srf');
+            if isempty(srf_b_vec)
+                continue
+            end
+            b = mean(srf_b_vec,2);
+            bp = b(2:3);
+            bpn = bp/sqrt(bp'*bp);
+            bper = (srfuu'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
+            bort = ([bpn(2),-bpn(1)]*srfuu);
+            f(end+1) = std(bort)^2/(std(bort)^2+std(bper)^2);
+            fep(end+1) = tswf.epoch(i);
 
+
+        end
+        plot(fep, f,'b.')
+        xlim([rtime0,rtime1])
+        datetick('Keeplimits');
+        ylim([0,1])
+        title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
+        ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
+        vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
     end
-    plot(fep, f,'b.')
-    xlim([rtime0,rtime1])
-    datetick('Keeplimits');
-    ylim([0,1])
-    title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
-    ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
-    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
-end
 end
 
 f = gcf;
