@@ -1,4 +1,4 @@
-function t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m)
+function t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
 %T3_OVERVIEW_PANEL Plotter function for individual events which analyses
 %them and saves panels with the data
 
@@ -115,7 +115,12 @@ xlim([rtime0,rtime1])
 [pastt,pasden] = caadb_get_solo_swa_pas_moments(rtime0,4*60*60);
 ylim manual
 vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
-
+temp = size(epd_energies);
+hold on
+for i = 1:(temp(3)/2)
+    plot([epd_energies(index,1,i*2-1) epd_energies(index,1,i*2)],[epd_energies(index,2,i*2-1) epd_energies(index,2,i*2)],'b','LineWidth',3)
+end
+hold off
 
 subplot(nsplts,1,osplts(3))     % Plasma density
 ylim auto

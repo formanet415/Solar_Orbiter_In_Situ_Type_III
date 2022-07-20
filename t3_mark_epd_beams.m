@@ -28,7 +28,7 @@ while ~goodinput
         goodinput = true;
         epd_energies(index,1,1:marks) = x;
         epd_energies(index,2,1:marks) = y;
-        fprintf('saving %s, updated marks on %s/n', name, datestr(rtt))
+        fprintf('saving %s, updated marks on %s \n', name, datestr(rtt))
         save(name,'epd_energies')
     elseif isempty(x)
         return
