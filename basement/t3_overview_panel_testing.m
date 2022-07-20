@@ -116,7 +116,7 @@ xlim([rtime0,rtime1])
 ylim manual
 epdtt=datenum(year,month,day+epd_nxt,epd_h,epd_m,0);
 vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
-[beamtts,beampks] = t3_fit_electron_velocity(rtime0, epdtt, 0)
+[beamtts,beampks] = t3_fit_electron_velocity(rtime0, epdtt, 0);
 hold on
 plot(beamtts,beampks*1e3,'b','LineWidth',5)
 

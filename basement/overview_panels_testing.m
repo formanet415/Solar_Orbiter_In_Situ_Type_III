@@ -1,4 +1,4 @@
-t3 = load_events();
+t3 = load_events_testing();
 for i = 1:size(t3.year)
     year = t3.year(i);
     month = t3.month(i);

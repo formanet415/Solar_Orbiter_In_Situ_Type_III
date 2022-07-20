@@ -13,8 +13,8 @@ elseif date>datenum(2021,10,22)
     [ep, ~, el, ~, mag, energ] = caadb_get_solo_epd_step_main(date,4*60*60);
 end
 
-averaged = 50;
-dt=el-mag;
+averaged = 20;
+dt=1./(el-mag);
 
 r=size(el);
 peaks=[];
