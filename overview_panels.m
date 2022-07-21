@@ -1,5 +1,6 @@
 t3 = load_events();
 load("epd_energies.mat")
+polarr = [];
 for i = 1:size(t3.year)
     year = t3.year(i);
     month = t3.month(i);
@@ -15,5 +16,10 @@ for i = 1:size(t3.year)
     lang_nxt = t3.langmuir_nxtday(i);
     lang_h = t3.langmuir_hour(i);
     lang_m = t3.langmuir_minute(i);
-    t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, i, epd_energies)
+    tmp = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, i, epd_energies);
+    if ~isnan(tmp)
+        r = size(tmp);
+        polarr(end+1:end+r(1),1:4) = tmp;
+    end
 end
+save('polarisation_array.mat','polarr')

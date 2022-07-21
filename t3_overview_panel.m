@@ -1,4 +1,4 @@
-function t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
+function polarray = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
 %T3_OVERVIEW_PANEL Plotter function for individual events which analyses
 %them and saves panels with the data
 
@@ -208,8 +208,8 @@ if ~isempty(ep)
             b = mean(srf_b_vec,2);
             bp = b(2:3);
             bpn = bp/sqrt(bp'*bp);
-            bper = (srfuu'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
-            bort = ([bpn(2),-bpn(1)]*srfuu);
+            bper = (srfwf'*bpn)'/cos(atan(b(1)/sqrt(b(2)^2+b(3)^2)));
+            bort = ([bpn(2),-bpn(1)]*srfwf);
             f(end+1) = std(bort)^2/(std(bort)^2+std(bper)^2);
             fep(end+1) = tswf.epoch(i);
 
@@ -225,11 +225,32 @@ if ~isempty(ep)
     end
 end
 
-f = gcf;
-f.Position = [100 100 1700 1300];
-saveas(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+graph = gcf;
+graph.Position = [100 100 1700 1300];
+saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
 %exportgraphics(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))],'Resolution','300')
-close(f)
+close(graph)
+
+
+% save polarisation, energy rms, beam speed (tbd wavenumber)
+if exist('f') && ~isempty(f)
+    polarray=[];
+    for i = 1:length(f)
+        [~, tmp] = min(abs(tswf.epoch-fep(i)));
+        srfwf(1:2,:) = convert_to_SRF(tswf,tmp);
+        Erms = sqrt(std(bort)^2+std(bper)^2);
+        beamenerg = beam_energy(tswf.epoch(tmp),epd_energies,index);
+        if beamenerg~=0
+            polarray(end+1,1:4) = [f(i), Erms, beamenerg, 0];
+        end
+    end
+
+else
+    polarray = nan;
+end
+
+
+
 end
 
 
