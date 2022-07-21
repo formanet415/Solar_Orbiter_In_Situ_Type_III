@@ -1,0 +1,23 @@
+All data is stored in "events" structure
+
+
+
+Times
+"rtt" - time of the in situ event marking the appearance of radio signal in TDS RSWF data.
+"epdtt" - marks an increase of particle flux or the beginning of particle beam in EPD STEP data.
+"langtt" - first appearance of langmuir wave after rtt in RSWF. Probably useless.
+
+
+
+TSWF
+"tswf_nxt" -    0 = indexes correspond to the same day as the day of rtt. Load the tswf file for the same day as rtt.
+                1 = the event happened at the end of a day, load the tswf file for the following day. The indexes are from the tswf file for the next day.
+"tswf_idx" - indexes in the tswf file which contain langmuir waves
+
+
+
+EPD
+"epd_energies" - array containing times and energies marked manually to fit the beam energy.
+                (i x j x k) where   i=number of in situ event.
+                                    j=1 is time and j=2 is energy.
+                                    k is odd means beginning of line, k is even means end of line.
