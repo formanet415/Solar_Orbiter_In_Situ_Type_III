@@ -249,7 +249,11 @@ else
     polarray = nan;
 end
 [~, pos, ~] = caadb_get_solo_orbit(rtime0, 3600);
-r = pos(1)/1.496e8;
+if ~isempty(pos)
+    r = pos(1)/1.496e8;
+else
+    r = nan;
+end
 
 
 end
