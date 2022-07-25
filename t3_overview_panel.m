@@ -248,8 +248,8 @@ if exist('f') && ~isempty(f)
 else
     polarray = nan;
 end
-r = caadb_get_solo_orbit(rtime0, 3600);
-
+[~, pos, ~] = caadb_get_solo_orbit(rtime0, 3600);
+r = pos(1)/1.496e8;
 
 
 end
