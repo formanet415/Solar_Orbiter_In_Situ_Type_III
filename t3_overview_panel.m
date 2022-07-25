@@ -1,4 +1,4 @@
-function polarray = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
+function [polarray, r] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
 %T3_OVERVIEW_PANEL Plotter function for individual events which analyses
 %them and saves panels with the data
 
@@ -248,6 +248,7 @@ if exist('f') && ~isempty(f)
 else
     polarray = nan;
 end
+r = caadb_get_solo_orbit(rtime0, 3600);
 
 
 
