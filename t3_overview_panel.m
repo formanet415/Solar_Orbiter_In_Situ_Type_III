@@ -9,14 +9,14 @@ subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
 rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
 rtime0 = datenum(year, month, day, h, m, 0) - 1/48;
 rtime1 = rtime0 + 2/12 - 1/48;
+epd_time = datenum(year,month,day+epd_nxt,epd_h,epd_m,0);
+lang_time = datenum(year,month,day+lang_nxt,lang_h,lang_m,0);
 [~, r0] = min(abs(rswf.epoch - rtime0));
 [~, r1] = min(abs(rswf.epoch - rtime1));
 
 ridxs = r0:r1;
 for i = 1:length(ridxs)
-
     srfuu = convert_to_SRF(rswf,ridxs(i));  % This takes samps_per_ch into account
-
     [sp, fq, nav] = make_spectrum(srfuu, length(srfuu(1,:))/8, 1/rswf.samp_rate(ridxs(i)),rswf.samp_rate(ridxs(i))/2);
 
     temp = sum(squeeze(sp)');
@@ -51,7 +51,7 @@ opts.show_xlabel = 0;           % TNR spectrogram
 subplot(nsplts,1,osplts(6))
 solo_panel_tnr_spectrum(rtime0,4*3600,4,opts);
 xlim([rtime0,rtime1])
-vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+vertline(epd_time,'black');
 ylim([7 1000])
 
 
@@ -99,7 +99,8 @@ else
 end
 
 ylim manual
-vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+vertline(epd_time,'black');
+
 
 
 subplot(nsplts,1,osplts(2));    % EPD STEP panel
@@ -112,9 +113,8 @@ elseif rtime0>datenum(2021,10,22)
 end
 xlim([rtime0,rtime1])
 
-[pastt,pasden] = caadb_get_solo_swa_pas_moments(rtime0,4*60*60);
 ylim manual
-vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+vertline(epd_time,'black');
 temp = size(epd_energies);
 hold on
 for i = 1:(temp(3)/2)
@@ -122,7 +122,10 @@ for i = 1:(temp(3)/2)
 end
 hold off
 
+
+
 subplot(nsplts,1,osplts(3))     % Plasma density
+[pastt, pasden, vel_rtn] = caadb_get_solo_swa_pas_moments(rtime0,4*60*60);
 ylim auto
 hold off
 
@@ -147,7 +150,7 @@ xlim([rtime0,rtime1])
 l = legend('AutoUpdate','off');
 %ylim manual
 ylim(get(gca, 'ylim'))
-vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+vertline(epd_time,'black');
 
 [ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 if ~isempty(ep)
@@ -183,7 +186,7 @@ if ~isempty(ep)
     %    legend('AutoUpdate','off','Location','northwest')
     %end
 
-    vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+    vertline(epd_time,'black');
     datetick('Keeplimits');
 
 
@@ -221,7 +224,7 @@ if ~isempty(ep)
         ylim([0,1])
         title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
         ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
-        vertline(datenum(year,month,day+epd_nxt,epd_h,epd_m,0),'black');
+        vertline(epd_time,'black');
     end
 end
 
@@ -233,6 +236,17 @@ close(graph)
 
 
 % save polarisation, energy rms, beam speed (tbd wavenumber)
+
+[~, pos, ~] = caadb_get_solo_orbit(rtime0, 3600);
+if ~isempty(pos)
+    r = pos(1)/1.496e8;
+else
+    r = nan;
+end
+
+tmp = vecnorm(vel_rtn);
+sw_vel = mean(tmp);
+
 if exist('f') && ~isempty(f)
     polarray=[];
     for i = 1:length(f)
@@ -241,19 +255,16 @@ if exist('f') && ~isempty(f)
         Erms = sqrt(std(bort)^2+std(bper)^2);
         beamenerg = beam_energy(tswf.epoch(tmp),epd_energies,index);
         if beamenerg~=0
-            polarray(end+1,1:4) = [f(i), Erms, beamenerg, 0];
+            polarray(end+1,1:8) = [f(i), Erms, beamenerg, rtime0, lang_time, epd_time, r, sw_vel];
+        else
+            polarr = nan;
         end
     end
 
 else
     polarray = nan;
 end
-[~, pos, ~] = caadb_get_solo_orbit(rtime0, 3600);
-if ~isempty(pos)
-    r = pos(1)/1.496e8;
-else
-    r = nan;
-end
+
 
 
 end
