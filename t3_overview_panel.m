@@ -10,7 +10,11 @@ rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
 rtime0 = datenum(year, month, day, h, m, 0) - 1/48;
 rtime1 = rtime0 + 2/12 - 1/48;
 epd_time = datenum(year,month,day+epd_nxt,epd_h,epd_m,0);
-lang_time = datenum(year,month,day+lang_nxt,lang_h,lang_m,0);
+if isnan(lang_h)
+    lang_time = nan;
+else
+    lang_time = datenum(year,month,day+lang_nxt,lang_h,lang_m,0);
+end
 [~, r0] = min(abs(rswf.epoch - rtime0));
 [~, r1] = min(abs(rswf.epoch - rtime1));
 
