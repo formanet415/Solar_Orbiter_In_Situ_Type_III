@@ -18,7 +18,7 @@ elseif rtt > datenum(2021, 10, 22)
 end
 xlim([rtt0, rtt1])
 f = gcf;
-f.Position = [100 100 1300 600];
+f.Position = [100 100 1800 450];
 vertline(epdtt, 'black');
 goodinput = false;
 while ~goodinput
