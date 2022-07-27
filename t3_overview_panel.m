@@ -5,15 +5,19 @@ function [polarray, r] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_
 caa_data_paths;
 subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
 
-
+yver = version('-release'); yver = str2num(yver(1:4));
 rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
 rtime0 = datenum(year, month, day, h, m, 0) - 1/48;
 rtime1 = rtime0 + 2/12 - 1/48;
 epd_time = datenum(year,month,day+epd_nxt,epd_h,epd_m,0);
-if strcmp(lang_h{1},'nan')
-    lang_time = nan;
+if yver<2019
+    if strcmp(lang_h{1},'nan')
+        lang_time = nan;
+    else
+        lang_time = datenum(year,month,day+lang_nxt,str2num(lang_h{1}),str2num(lang_m{1}),0);
+    end
 else
-    lang_time = datenum(year,month,day+lang_nxt,str2num(lang_h{1}),str2num(lang_m{1}),0);
+    lang_time = datenum(year,month,day+lang_nxt,lang_h,lang_m,0);
 end
 [~, r0] = min(abs(rswf.epoch - rtime0));
 [~, r1] = min(abs(rswf.epoch - rtime1));
