@@ -1,7 +1,7 @@
 function enb = t3_beam_energy(tt, epd_energies)
 enb = 0;
 load('t3_in_situ_events_V01.mat')
-[~,index] = min(abs(tt-events.rtt));clear events;
+[~,index] = min(abs(tt(1)-events.rtt));clear events;
 ts = epd_energies(index,1,:);
 ts = ts(ts~=0);
 t0s = ts(1:2:end);
