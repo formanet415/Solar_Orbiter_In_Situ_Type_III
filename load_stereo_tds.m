@@ -59,6 +59,8 @@ for i = 1:4
     ster.antenna(i,1:nsnap/4) = antenna(i:4:nsnap);
 end
 ster.samp_rate(1:nsnap/4) = 1e3./dt(1:4:nsnap);
+ster.mod(1:nsnap/4) = 60.*hr(1:4:nsnap);
+ster.sc = sc;
 
 end
 
