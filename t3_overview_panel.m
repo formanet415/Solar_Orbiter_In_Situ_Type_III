@@ -255,7 +255,10 @@ if exist('f') && ~isempty(f)
         srfwf(1:2,:) = convert_to_SRF(tswf,tswfindex);
         aErms = sqrt(std(bort)^2+std(bper)^2);
         abeamenerg = t3_beam_energy(tswf.epoch(tswfindex),epd_energies);
-        
+        if abeamenerg == 0
+            polarr = nan;
+            continue
+        end
         % Magnetic field statistics
         [~, magindex] = min(abs(brtnep-fep(i)));
         aclockang = mean(clockang(magindex-1:magindex+1));
@@ -278,19 +281,17 @@ if exist('f') && ~isempty(f)
             aden = abia;
         end
                 
-        if abeamenerg~=0
-            % polarisation, energy rms, beam speed, radio time, ...
-            % langmuir time, beam time, distance from the Sun in AU, ...
-            % solar wind velocity, clock angle, cone angle, ...
-            % magnetic field strength, TNR density, PAS density, BIAS density,
-            % combined density, timetag for cross-checking
-            polarray(end+1,1:16) = [f(i), aErms, abeamenerg, rtime0, ...
-                lang_time, epd_time, r, sw_vel, aclockang, aconeang, ... 
-                amagfstrength, atnr, apas, abia ...
-                aden, fep(i)];
-        else
-            polarray = nan;
-        end
+        
+        % polarisation, energy rms, beam speed, radio time, ...
+        % langmuir time, beam time, distance from the Sun in AU, ...
+        % solar wind velocity, clock angle, cone angle, ...
+        % magnetic field strength, TNR density, PAS density, BIAS density,
+        % combined density, timetag for cross-checking
+        polarray(end+1,1:16) = [f(i), aErms, abeamenerg, rtime0, ...
+            lang_time, epd_time, r, sw_vel, aclockang, aconeang, ...
+            amagfstrength, atnr, apas, abia ...
+            aden, fep(i)];
+        
     end
 
 else
