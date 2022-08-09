@@ -1,6 +1,6 @@
 function mamp_wave_packets(dn,type,index,skip_loading)
-%MAMP_WAVE_PACKETS Summary of this function goes here
-%   Detailed explanation goes here
+%MAMP_WAVE_PACKETS Plots mamp data and triggered snapshots showing the wave
+%packets.
 
 
 if ~exist('skip_loading','var') || isempty(skip_loading)
