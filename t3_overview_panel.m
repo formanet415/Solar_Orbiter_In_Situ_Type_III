@@ -274,7 +274,7 @@ if exist('f') && ~isempty(f)
         atnr = nan; if ~isempty(tnrindex) atnr = tnrden(tnrindex); end
         % custom product with priorities: 1. TNR, 2. PAS (+4%), 3. BIAS
         if ~isnan(atnr) 
-            aden = apas; 
+            aden = atnr; 
         elseif ~isnan(apas) 
             aden = apas*1.04; 
         else
