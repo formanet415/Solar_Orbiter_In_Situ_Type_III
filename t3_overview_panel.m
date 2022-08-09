@@ -160,18 +160,18 @@ l = legend('AutoUpdate','off');
 ylim(get(gca, 'ylim'))
 vertline(epd_time,'black');
 
-[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
-if ~isempty(ep)
-    subplot(nsplts,1,osplts(4))     % Magnetic field cone angle (tbd more about B field)
+[brtnep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
+if ~isempty(brtnep)
+    subplot(nsplts,1,osplts(4))     % Magnetic field cone angle
     hold off
     ylim auto
 
     yyaxis right
-    ntb=b_vec(2:3,:);
+    ntb = b_vec(2:3,:);
     CosTheta = ntb(1,:)./(vecnorm(ntb));
-    ThetaInDegrees = real(acosd(CosTheta)).*sign(ntb(2,:));
+    clockang = real(acosd(CosTheta)).*sign(ntb(2,:));
     color = [0.8500 0.3250 0.0980];
-    plot(ep,ThetaInDegrees,'.','Color',color,'Markersize',1,'Displayname','RTN clock angle')
+    plot(brtnep, clockang, '.', 'Color', color, 'Markersize', 1, 'Displayname', 'RTN clock angle')
     ylim([-180 180])
     set(gca, 'Ycolor', color)
     ylabel('clock angle [deg]')
@@ -182,17 +182,11 @@ if ~isempty(ep)
     ylim([0 180])
     hold on
     coneang = rad2deg(acos(b_vec(1,:)./vecnorm(b_vec)));
-    plot(ep, coneang,'b-','Displayname','RTN cone angle')
+    plot(brtnep, coneang,'b-','Displayname','RTN cone angle')
     datetick('Keeplimits');
     xlim([rtime0,rtime1])
     ylabel('cone angle [deg]')
     title('MAG RTN angles')
-
-    %if strcmp(version,'9.11.0.1769968 (R2021b)')
-    %    legend('AutoUpdate','off','Location','northeast')
-    %else
-    %    legend('AutoUpdate','off','Location','northwest')
-    %end
 
     vertline(epd_time,'black');
     datetick('Keeplimits');
@@ -203,7 +197,7 @@ if ~isempty(ep)
 
     subplot(nsplts,1,osplts(5))     % E perpendicular / E total
 
-    % commented an example of conversion to B paralell and B perpendicular
+    % conversion to B paralell and B perpendicular below
     if ~isnan(tswf_idx(1)) && ~isempty(b_vec)
         f = [];
         fep=[];
@@ -239,7 +233,6 @@ end
 graph = gcf;
 graph.Position = [100 100 1700 1300];
 saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
-%exportgraphics(f, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))],'Resolution','300')
 close(graph)
 
 
@@ -258,14 +251,45 @@ sw_vel = mean(tmp);
 if exist('f') && ~isempty(f)
     polarray=[];
     for i = 1:length(f)
-        [~, tmp] = min(abs(tswf.epoch-fep(i)));
-        srfwf(1:2,:) = convert_to_SRF(tswf,tmp);
-        Erms = sqrt(std(bort)^2+std(bper)^2);
-        beamenerg = t3_beam_energy(tswf.epoch(tmp),epd_energies);
-        if beamenerg~=0
-            polarray(end+1,1:8) = [f(i), Erms, beamenerg, rtime0, lang_time, epd_time, r, sw_vel];
+        [~, tswfindex] = min(abs(tswf.epoch-fep(i)));
+        srfwf(1:2,:) = convert_to_SRF(tswf,tswfindex);
+        aErms = sqrt(std(bort)^2+std(bper)^2);
+        abeamenerg = t3_beam_energy(tswf.epoch(tswfindex),epd_energies);
+        
+        % Magnetic field statistics
+        [~, magindex] = min(abs(brtnep-fep(i)));
+        aclockang = mean(clockang(magindex-1:magindex+1));
+        aconeang = mean(coneang(magindex-1:magindex+1));
+        amagfstrength = mean(vecnorm(b_vec(:,magindex-1:magindex+1)));
+        
+        % Plasma density statistics
+        [~, pasindex] = min(abs(pastt-fep(i)));
+        [~, biaindex] = min(abs(biatt-fep(i)));
+        [~, tnrindex] = min(abs(tnrtt-fep(i)));
+        apas = nan; if ~isempty(pasindex) apas = pasden(pasindex); end
+        abia = nan; if ~isempty(biaindex) abia = biaden(biaindex); end
+        atnr = nan; if ~isempty(tnrindex) atnr = tnrden(tnrindex); end
+        % custom product with priorities: 1. TNR, 2. PAS (+4%), 3. BIAS
+        if ~isnan(atnr) 
+            aden = apas; 
+        elseif ~isnan(apas) 
+            aden = apas*1.04; 
         else
-            polarr = nan;
+            aden = abia;
+        end
+                
+        if abeamenerg~=0
+            % polarisation, energy rms, beam speed, radio time, ...
+            % langmuir time, beam time, distance from the Sun in AU, ...
+            % solar wind velocity, clock angle, cone angle, ...
+            % magnetic field strength, TNR density, PAS density, BIAS density,
+            % combined density, timetag for cross-checking
+            polarray(end+1,1:16) = [f(i), aErms, abeamenerg, rtime0, ...
+                lang_time, epd_time, r, sw_vel, aclockang, aconeang, ... 
+                amagfstrength, atnr, apas, abia ...
+                aden, fep(i)];
+        else
+            polarray = nan;
         end
     end
 
@@ -273,8 +297,7 @@ else
     polarray = nan;
 end
 
-
-
+%close(graph)
 end
 
 
