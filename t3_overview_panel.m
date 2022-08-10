@@ -48,10 +48,12 @@ if r1 == length(rswf.epoch)
 end
 
 nsplts = 6;             % number of subplots
-[ep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
-if isempty(b_vec)
+[~, bv1, ~, ~, ~]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
+[~, bv2, ~, ~]=caadb_get_solo_mag_LL02(rtime0,60*60*4,'rtn');
+if isempty(bv1) && isempty(bv2)
     nsplts = 4;
 end
+clear bv1 bv2
 osplts = [2 3 4 5 6 1]; % order of subplots
 
 
@@ -161,6 +163,10 @@ ylim(get(gca, 'ylim'))
 vertline(epd_time,'black');
 
 [brtnep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
+if isempty(brtnep)
+    fprintf('Mag data missing, looking for low latency data\n')
+    [brtnep, b_vec, b_range, qf] = caadb_get_solo_mag_LL02(rtime0,60*60*4,'rtn');
+end
 if ~isempty(brtnep)
     subplot(nsplts,1,osplts(4))     % Magnetic field cone angle
     hold off
@@ -208,7 +214,11 @@ if ~isempty(brtnep)
             srfwf(1:2,:) = convert_to_SRF(tswf,i);
             [ep, srf_b_vec, b_range, time_res, qf]=caadb_get_solo_mag(tswf.epoch(i)-0.25/(86400),0.5,'srf');
             if isempty(srf_b_vec)
-                continue
+                fprintf('Mag data missing, looking for low latency data\n')
+                [ep, srf_b_vec, b_range, qf] = caadb_get_solo_mag_LL02(rtime0,60*60*4,'srf');
+                if isempty(srf_b_vec)
+                    continue
+                end
             end
             b = mean(srf_b_vec,2);
             bp = b(2:3);

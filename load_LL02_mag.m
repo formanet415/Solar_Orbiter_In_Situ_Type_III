@@ -34,7 +34,7 @@ end
 
 llmg.epoch = cstr{1};
 llmg.data_rtn = cstr{2};
-llmg.rtn_label = cstr{2};
+llmg.rtn_label = cstr{3};
 llmg.data_srf = cstr{6};
 llmg.srf_label = cstr{7};
 end
