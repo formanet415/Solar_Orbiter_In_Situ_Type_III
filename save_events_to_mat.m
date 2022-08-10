@@ -1,8 +1,8 @@
 t3 = load_events();
-load("epd_energies.mat")
+load("epd_energies_V02.mat")
 
 
-version = 1;
+version = 2;
 
 
 for i = 1:size(t3.year)
