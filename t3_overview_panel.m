@@ -290,7 +290,9 @@ if exist('f') && ~isempty(f)
         else
             aden = abia;
         end
-                
+        if isempty(lang_time)
+	    lang_time = nan;
+    	end	    
         
         % polarisation, energy rms, beam speed, radio time, ...
         % langmuir time, beam time, distance from the Sun in AU, ...
