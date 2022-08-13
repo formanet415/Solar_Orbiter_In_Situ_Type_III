@@ -2,7 +2,7 @@
 % beam speeds
 
 caa_data_paths
-load('polarisation_array_V02.mat');
+load('polarisation_array_V03.mat');
 load('epd_energies_V02.mat');
 
 r = polarr(:,7);
