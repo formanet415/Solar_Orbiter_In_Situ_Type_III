@@ -130,6 +130,18 @@ f2 = fit(ttpk(filter)',log(dtpk(filter))','poly1','Weights',exp(linspace(5,1,sum
 hold on
 scatter(ttpk,dtpk)
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
+
+xlim([ep0 ep0 + tlen/86400]);
+
+set(gca,'FontSize',12);
+ylabel(axlabel,'FontSize',12);
+if (show_title)
+    title(sprintf('EPD STEP-MAIN omnidirectional %s %s', titlabel, datestr(ep0,'YYYY-mm-dd HH:MM:SS.FFF')),'FontSize',12);
+end
+if ~show_xlabel
+    xlabel([]);
+end
+datetick()
 hold off
 end
 

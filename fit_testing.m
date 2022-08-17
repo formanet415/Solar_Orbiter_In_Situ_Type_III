@@ -18,6 +18,7 @@ for i = 1:size(t3.year)
     t3_auto_fit_electron_vel(datenum(year, month, day, h, m,00),3600*2);
 
     f = gcf;
-    f.Position = [100 100 1700 1300];
+    %f.Position = [100 100 1700 1300];
+    datetick('Keeplimits')
     saveas(f, ['overview plots' filesep sprintf('fit_testing_TYPE_III_overview_panel_%s.png',datestr(datenum(year, month, day, h, m,00),'yyyymmdd_HHMMSS'))])
 end
