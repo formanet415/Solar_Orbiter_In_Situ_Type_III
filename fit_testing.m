@@ -15,6 +15,9 @@ for i = 1:size(t3.year)
     lang_h = t3.langmuir_hour(i);
     lang_m = t3.langmuir_minute(i);
     epd_logged_trigger = datenum(year,month,day+epd_nxt,epd_h,epd_m,0);
-    t3_fit_electron_velocity(datenum(year, month, day, h, m,00),epd_logged_trigger)
-    %t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m)
+    t3_auto_fit_electron_vel(datenum(year, month, day, h, m,00),3600*2);
+
+    f = gcf;
+    f.Position = [100 100 1700 1300];
+    saveas(f, ['overview plots' filesep sprintf('fit_testing_TYPE_III_overview_panel_%s.png',datestr(datenum(year, month, day, h, m,00),'yyyymmdd_HHMMSS'))])
 end
