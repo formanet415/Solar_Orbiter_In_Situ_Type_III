@@ -60,11 +60,16 @@ osplts = [2 3 5 6 7 1 4]; % order of subplots
 opts.show_xlabel = 0;           % MAMP
 subplot(nsplts,1,osplts(7))
 [mamp_ep, mamp] = caadb_get_solo_tds_mamp(rtime0,4*3600);
-plot(mamp_ep, mamp(1,:)*1e3)
-set(gca, 'YScale', 'log')
-datetick()
-title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
-ylabel('MAMP (mV/m)')
+if ~isempty(mamp)
+    plot(mamp_ep, mamp(1,:)*1e3)
+    set(gca, 'YScale', 'log')
+    datetick()
+    title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
+    ylabel('MAMP (mV/m)')
+else
+    title('No MAMP data')
+end
+
 xlim([rtime0,rtime1])
 vertline(epd_time,'black');
 
