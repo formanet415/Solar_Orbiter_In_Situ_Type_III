@@ -47,14 +47,26 @@ if r1 == length(rswf.epoch)
     end
 end
 
-nsplts = 6;             % number of subplots
+nsplts = 7;             % number of subplots
 [~, bv1, ~, ~, ~]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
 [~, bv2, ~, ~]=caadb_get_solo_mag_LL02(rtime0,60*60*4,'rtn');
 if isempty(bv1) && isempty(bv2)
-    nsplts = 4;
+    nsplts = 5;
 end
 clear bv1 bv2
-osplts = [2 3 4 5 6 1]; % order of subplots
+osplts = [2 3 5 6 7 1 4]; % order of subplots
+
+
+opts.show_xlabel = 0;           % MAMP
+subplot(nsplts,1,osplts(7))
+[mamp_ep, mamp] = caadb_get_solo_tds_mamp(rtime0,4*3600);
+plot(mamp_ep, mamp(1,:)*1e3)
+set(gca, 'YScale', 'log')
+datetick()
+title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
+ylabel('MAMP (mV/m)')
+xlim([rtime0,rtime1])
+vertline(epd_time,'black');
 
 
 opts.show_xlabel = 0;           % TNR spectrogram
@@ -241,7 +253,7 @@ if ~isempty(brtnep)
 end
 
 graph = gcf;
-graph.Position = [100 100 1700 1300];
+graph.Position = [100 100 1700 1450];
 saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
 close(graph)
 
