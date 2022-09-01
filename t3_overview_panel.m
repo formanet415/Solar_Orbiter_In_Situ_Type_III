@@ -63,7 +63,7 @@ subplot(nsplts,1,osplts(7))
 if ~isempty(mamp)
     plot(mamp_ep, mamp(1,:)*1e3)
     set(gca, 'YScale', 'log')
-    datetick()
+    
     title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
     ylabel('MAMP (mV/m)')
 else
@@ -71,6 +71,7 @@ else
 end
 
 xlim([rtime0,rtime1])
+datetick('Keeplimits')
 vertline(epd_time,'black');
 
 
