@@ -1,4 +1,5 @@
 t3 = load_events();
+caa_data_paths
 for i = 1:size(t3.year)
     year = t3.year(i);
     month = t3.month(i);
