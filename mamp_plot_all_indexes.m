@@ -14,6 +14,8 @@ elseif strcmp(type,'rswf')
     dt = tdscdf_load_l2_surv_rswf(dn);
 elseif strcmp(type,'sbm2')
     dt = tdscdf_load_l2_surv_tswf('C:\Users\tform\OneDrive - Univerzita Karlova\OKF\sbm2\solo_L2_rpw-tds-sbm2-tswf-e_20211009T060650-20211009T080652_V01.cdf',0);
+elseif strcmp(type,'sbm2jaruska')
+    dt = tdscdf_load_l2_surv_tswf('/home/formanet/rpw/L2/tds_sbm2_wf_e/2021/10/solo_L2_rpw-tds-sbm2-tswf-e-cdag_20211009T060551-20211009T080751_V01.cdf',0);
 end
 for i = 1:length(dt.epoch)
     mamp_wave_packets(dt,type,i,1)
