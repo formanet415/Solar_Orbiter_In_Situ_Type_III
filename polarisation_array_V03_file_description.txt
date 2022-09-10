@@ -6,7 +6,7 @@ The columns of the array are described below
 col  n: (variable name)	description		[units]
 col  1: (f)		polarisation factor	- F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}); F=1 => transverse, F=0 => linear		[dimensionless]
 col  2: (erms)		energy rms 	- Total wave energy. 										[not sure, calculated with std (ask JS)]
-col  3: (beamenerg)	beam energy	- Beam speed in energy units.									[eV]
+col  3: (beamenerg)	beam energy	- Beam speed in energy units.									[keV]
 col  4: (rtt)		radio time	- Time of the in situ event marking the appearance of radio signal in TDS RSWF data.		[epoch]
 col  5: (langtt)	langmuir wave time	- First appearance of langmuir wave after rtt in RSWF.					[epoch]
 col  6: (epdtt)		epd time	- Marks an increase of particle flux or the beginning of particle beam in EPD STEP data.	[epoch]
