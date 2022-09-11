@@ -142,5 +142,5 @@ t = ltt:1/86400:endtt;
 vel = t3m_beam_speed(len, tt0, t);
 men = vel_to_ev(vel);
 nrmen = nrvel_to_ev(vel);
-plot(t, men*1e-3, 'r','LineWidth',3,'DisplayName','Malaspina method prediction');
+plot(t, men*1e-3, 'r','LineWidth',3,'DisplayName','Malaspina et al., 2011');
 legend()
