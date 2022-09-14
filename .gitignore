@@ -2,6 +2,7 @@
 *.asv
 plots/*
 events/all/*.png
-overview plots/*.png
+overview plots/fit*.png
+overview plots/TYPE_III_b*.png
 overview plots/energy V01/*
 jaruskadir.mat
