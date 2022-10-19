@@ -2,7 +2,7 @@ All data is stored in "events" structure
 
 
 
-Times
+Times - Matlab datenum
 "rtt" - time of the in situ event marking the appearance of radio signal in TDS RSWF data.
 "epdtt" - marks an increase of particle flux or the beginning of particle beam in EPD STEP data.
 "langtt" - first appearance of langmuir wave after rtt in RSWF. Probably useless.
