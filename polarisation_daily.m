@@ -1,10 +1,13 @@
+load('polarisation_array_V03.mat');
+rtt=polarr(:,4);
 pi=1;
 ska={};
 reduced = [];
 ipi = 1;
 slopes=[];
 for i=1:142
-if floor(10*(rtt(i)-rtt(pi)))~=0
+    disp(24*60*60*(rtt(i)-rtt(pi)))
+if floor(24*6000*(rtt(i)-rtt(pi)))~=0
     figure(2)
     v = rand(3,1);
     x=polarr(pi:i-1,3);
@@ -25,7 +28,8 @@ if floor(10*(rtt(i)-rtt(pi)))~=0
         
         reduced(ipi,j)=mean(polarr(pi:i,j));
     end
-    ipi=ipi+1
+    reduced(ipi,16)=c(1);
+    ipi=ipi+1;
 hold on
 pi=i;
 end
