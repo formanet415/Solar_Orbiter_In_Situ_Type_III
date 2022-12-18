@@ -277,6 +277,10 @@ tmp = vecnorm(vel_rtn);
 sw_vel = mean(tmp);
 
 if exist('f') && ~isempty(f)
+    disp('_____________________________________')
+    disp('THIS DAY IS BEING SAVED TO POLARR: ')
+    disp(datestr(rtime0))
+    disp('_____________________________________')
     polarray=[];
     for i = 1:length(f)
         [~, tswfindex] = min(abs(tswf.epoch-fep(i)));
