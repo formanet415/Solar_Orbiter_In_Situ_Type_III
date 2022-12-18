@@ -181,7 +181,7 @@ ylim(get(gca, 'ylim'))
 vertline(epd_time,'black');
 
 [brtnep, b_vec, b_range, time_res, qf]=caadb_get_solo_mag(rtime0,60*60*4,'rtn');
-if isempty(brtnep) || isnan(sum(sum(b_vec)))
+if isempty(brtnep) || sum(sum(isnan(b_vec)))>length(b_vec)
     fprintf('Mag data missing, looking for low latency data\n')
     [brtnep, b_vec, b_range, qf] = caadb_get_solo_mag_LL02(rtime0,60*60*4,'rtn');
 end
