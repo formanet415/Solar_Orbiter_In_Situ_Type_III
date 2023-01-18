@@ -1,4 +1,4 @@
-function t3_auto_fit_electron_vel(ep0, tlen, species, opts)
+function t3_auto_fit_electron_vel(ep0, tlen, species, opts, justfit)
 
 %T3_AUTO_FIT_ELECTRON_VEL does automatic fitting of the electron beam speed
 %   from EPD data.
@@ -23,6 +23,9 @@ opts_sp.colorax = 0;
 opts_sp.log_y = 1;
 threshold = 1;
 
+if ~exist('justfit','var') || isempty(justfit)
+    justfit = 0;
+end
 if ~exist('species','var') || isempty(species)
     species = 'electrons';
 end
@@ -103,7 +106,7 @@ for i = 1:dims(2)
     ttpk = [ttpk ones(length(pks),1)'*ep(i)];
     dtpk = [dtpk energ(loc)'*1e3];
 end
-
+if justfit==0
 figure(1)
 plot_spectrogram(spn, energ*1e3, ep, opts_sp);
 %figure(2)
@@ -112,9 +115,11 @@ plot_spectrogram(spn, energ*1e3, ep, opts_sp);
 %figure(3)
 %scatter(ttpk,dtpk)
 %datetick()
+end
 try
     f1 = fit(ttpk',log(dtpk)','poly1');
 catch ME
+    disp('fitting failed')
     return
 end
 %hold on
@@ -130,7 +135,7 @@ f2 = fit(ttpk(filter)',log(dtpk(filter))','poly1','Weights',exp(linspace(5,1,sum
 hold on
 scatter(ttpk,dtpk)
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
-
+if justfit == 0
 xlim([ep0 ep0 + tlen/86400]);
 
 set(gca,'FontSize',12);
@@ -143,5 +148,6 @@ if ~show_xlabel
 end
 datetick()
 hold off
+end
 end
 

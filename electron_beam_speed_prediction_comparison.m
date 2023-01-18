@@ -53,7 +53,15 @@ for i = 1:length(TNR_time)
     %plot(t, nrmen*1e-3, 'y.');
     set(gca, "YScale", "log")
     
-    legend('hand fitted', 'Malaspina et al.,2011')
+    
+
+
+    % automatic fitting
+    t3_auto_fit_electron_vel(TNR_time(i),3600*2,'electrons',opts,1);
+
+
+    legend('hand fitted', 'Malaspina et al.,2011', 'EPD STEP peaks', 'EPD STEP beam fit')
+
     hold off
     
     saveas(f, ['overview plots' filesep sprintf('TYPE_III_beam_speeds_TNR_time_%s.png',datestr(t0,'yyyymmdd_HHMMSS'))])
