@@ -1,4 +1,4 @@
-function [polarray, r] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies)
+function [polarray, r] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, index, epd_energies, opts)
 %T3_OVERVIEW_PANEL Plotter function for individual events which analyses
 %them and saves panels with the data
 
@@ -143,11 +143,18 @@ xlim([rtime0,rtime1])
 
 ylim manual
 vertline(epd_time,'black');
-temp = size(epd_energies);
-hold on
-for i = 1:(temp(3)/2)
-    plot([epd_energies(index,1,i*2-1) epd_energies(index,1,i*2)],[epd_energies(index,2,i*2-1) epd_energies(index,2,i*2)],'b','LineWidth',3)
+if opts.autoplot_epd == 0
+    temp = size(epd_energies);
+    hold on
+    for i = 1:(temp(3)/2)
+        plot([epd_energies(index,1,i*2-1) epd_energies(index,1,i*2)],[epd_energies(index,2,i*2-1) epd_energies(index,2,i*2)],'b','LineWidth',3)
+    end
 end
+if opts.autoplot_epd == 1
+    t3_auto_fit_electron_vel(epd_time-1/48,3600*2,'electrons',opts,1);
+end
+
+
 hold off
 
 
@@ -260,7 +267,11 @@ end
 
 graph = gcf;
 graph.Position = [100 100 1700 1450];
-saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+if opts.autoplot_epd == 1
+    saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_autofit_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+else
+    saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+end
 close(graph)
 
 
