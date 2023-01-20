@@ -35,7 +35,7 @@ for i = 1:length(TNR_time)
         own(end+1) = t3_beam_energy(t(j), epd_energies);
     end
     hold on
-    plot(t, own, 'b.')
+    plot(t, own, 'c.')
 
     % get data for prediction based on time since emission
     [~, ~, vel_rtn] = caadb_get_solo_swa_pas_moments(te,3*60*60);
@@ -55,7 +55,7 @@ for i = 1:length(TNR_time)
     
     
 
-
+    opts = [];
     % automatic fitting
     t3_auto_fit_electron_vel(TNR_time(i),3600*2,'electrons',opts,1);
 
