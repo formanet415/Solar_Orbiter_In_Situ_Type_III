@@ -218,11 +218,10 @@ if ~isempty(brtnep)
     xlim([rtime0,rtime1])
     ylabel('cone angle [deg]')
     title('MAG RTN angles')
-
+    
+    %legend('AutoUpdate','off')
     vertline(epd_time,'black');
     datetick('Keeplimits');
-
-
 
 
 
