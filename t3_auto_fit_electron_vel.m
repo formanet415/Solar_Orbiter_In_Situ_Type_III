@@ -1,4 +1,4 @@
-function t3_auto_fit_electron_vel(ep0, tlen, species, opts, justfit)
+function [ttpk, f2] = t3_auto_fit_electron_vel(ep0, tlen, species, opts, justfit)
 
 %T3_AUTO_FIT_ELECTRON_VEL does automatic fitting of the electron beam speed
 %   from EPD data.
@@ -13,7 +13,8 @@ function t3_auto_fit_electron_vel(ep0, tlen, species, opts, justfit)
 %  opts.time_seconds  - if true, time axis is labeled in seconds
 %                       otherwise datetick is used. [def = 0]
 
-
+ttpk = [];
+f2= [];
 % default parameters
 
 show_xlabel = 1;
@@ -133,7 +134,7 @@ end
 f2 = fit(ttpk(filter)',log(dtpk(filter))','poly1','Weights',exp(linspace(5,1,sum(filter))));
 %figure(1)
 hold on
-scatter(ttpk,dtpk)
+scatter(ttpk,dtpk,'magenta')
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
 if justfit == 0
 xlim([ep0 ep0 + tlen/86400]);
