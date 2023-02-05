@@ -1,6 +1,7 @@
 
 *.asv
-plots/*
+plots/*.png
+plots/fitting/*
 events/all/*.png
 overview plots/fit*.png
 overview plots/TYPE_III_b*.png
