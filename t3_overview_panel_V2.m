@@ -50,9 +50,9 @@ end
 
 caa_data_paths;
 % good configuration for < 7 subplots:
-subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
+%subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
 % todo: add a tight configuration and move timetags to the bottom subplot
-% only.
+subplot = @(m,n,p) subtightplot (m,n,p,[0.024 0.024], [0.03 0.04], [0.03 0.03]);
 
 yver = version('-release'); yver = str2num(yver(1:4)); % probably not needed, was used because some function worked differently before R2019
 rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
@@ -197,12 +197,12 @@ end
 if subplot_conf(4)==1
 opts.show_xlabel = 0;           % MAMP
 subplot(nsplts,1,osplts(4))
-[mamp_ep, mamp] = caadb_get_solo_tds_mamp(rtime0,plot_duration);
+[mamp_ep, mamp, tmp] = caadb_get_solo_tds_mamp(rtime0,plot_duration);
 if ~isempty(mamp)
     plot(mamp_ep, mamp(1,:)*1e3)
     set(gca, 'YScale', 'log')
     
-    title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
+    title(sprintf('TDS MAMP CH%i %s', tmp.channel_cfg(1,1), datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')),'FontSize',12)
     
 else
     title('No MAMP data')
@@ -347,6 +347,17 @@ end
 
 graph = gcf;
 graph.Position = [100 100 1700 1450];
+% Get handles of all subplots
+h = get(gcf, 'children');
+
+% Loop over subplots and remove XTickLabels except for the bottom one
+for i = 1:length(h)
+    if strcmp(get(h(i), 'type'), 'axes')  % check if this is a subplot
+        if i ~= 1  % check if this is the bottom subplot
+            set(h(i), 'XTickLabel', [])
+        end
+    end
+end
 if opts.autoplot_epd == 1
     saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_autofit_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
 else
