@@ -298,8 +298,7 @@ if exist('f') && ~isempty(f)
         aErms = sqrt(std(bort)^2+std(bper)^2);
         abeamenerg = t3_beam_energy(tswf.epoch(tswfindex),epd_energies);
         if abeamenerg == 0
-            polarr = nan;
-            continue
+            abeamenerg = nan;
         end
         % Magnetic field statistics
         [~, magindex] = min(abs(brtnep-fep(i)));
@@ -324,17 +323,45 @@ if exist('f') && ~isempty(f)
         end
         if isempty(lang_time)
 	    lang_time = nan;
-    	end	    
+        end	    
         
+        ratestotalenerg = nan;
+        maintotalenerg = nan;
+
+        if rtime0<datenum(2021,10,22)
+            [epdep,int_flux, mag_flux, energ_cent, extras] = caadb_get_solo_epd_step_rates(tswf.epoch(tswfindex)-30/86400,60);
+            if ~isempty(epdep) && 1 < length(epdep)
+                denerg(2:length(energ_cent)) = energ_cent(2:end)-energ_cent(1:end-1);
+                denerg(1)=denerg(2);
+
+                dtepd = (epdep(2:end)-epdep(1:end-1))/86400;
+                dtepd(end+1)=dtepd(end);
+                ratestotalenerg = (dtepd*int_flux'*denerg')/sum(dtepd);
+            end
+        elseif rtime0>datenum(2021,10,22)
+            [epdep, int_flux, mag_flux, energ_cent, extras] = caadb_get_solo_epd_step_main(tswf.epoch(tswfindex)-30/86400,60);
+            if ~isempty(epdep) && 1 < length(epdep)
+                denerg(2:length(energ_cent)) = energ_cent(2:end)-energ_cent(1:end-1);
+                denerg(1)=denerg(2);
+
+                dtepd = (epdep(2:end)-epdep(1:end-1))/86400;
+                dtepd(end+1)=dtepd(end);
+                maintotalenerg = (dtepd*int_flux'*denerg')/sum(dtepd);
+            end
+        end
+        
+
+        
+
         % polarisation, energy rms, beam speed, radio time, ...
         % langmuir time, beam time, distance from the Sun in AU, ...
         % solar wind velocity, clock angle, cone angle, ...
         % magnetic field strength, TNR density, PAS density, BIAS density,
         % combined density, timetag for cross-checking
-        polarray(end+1,1:16) = [f(i), aErms, abeamenerg, rtime0, ...
+        polarray(end+1,1:18) = [f(i), aErms, abeamenerg, rtime0, ...
             lang_time, epd_time, r, sw_vel, aclockang, aconeang, ...
             amagfstrength, atnr, apas, abia ...
-            aden, fep(i)];
+            aden, fep(i), ratestotalenerg, maintotalenerg];
         
     end
 
