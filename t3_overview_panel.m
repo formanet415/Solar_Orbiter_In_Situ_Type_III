@@ -3,7 +3,7 @@ function [polarray, r] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_
 %them and saves panels with the data
 
 caa_data_paths;
-subplot = @(m,n,p) subtightplot (m,n,p,[0.04 0.04], [0.03 0.02], [0.04 0.04]);
+subplot = @(m,n,p) subtightplot (m,n,p,[0.024 0.024], [0.03 0.04], [0.03 0.03]);
 
 yver = version('-release'); yver = str2num(yver(1:4));
 rswf = tdscdf_load_l2_surv_rswf(datetime(year,month,day));
@@ -59,12 +59,12 @@ osplts = [2 3 5 6 7 1 4]; % order of subplots
 
 opts.show_xlabel = 0;           % MAMP
 subplot(nsplts,1,osplts(7))
-[mamp_ep, mamp] = caadb_get_solo_tds_mamp(rtime0,4*3600);
+[mamp_ep, mamp, tmp] = caadb_get_solo_tds_mamp(rtime0,4*3600);
 if ~isempty(mamp)
     plot(mamp_ep, mamp(1,:)*1e3)
     set(gca, 'YScale', 'log')
     
-    title(sprintf('TDS MAMP on %s, CH1',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
+    title(sprintf('TDS MAMP CH%i %s', tmp.channel_cfg(1,1), datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')),'FontSize',12 )
     ylabel('MAMP (mV/m)')
 else
     title('No MAMP data')
@@ -89,7 +89,7 @@ ylim auto
 opts.colorax = [-16,-9];
 hcbar = plot_spectrogram(sps',fq*1e-3,tt,opts);
 xlim([rtime0,rtime1])
-title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')))
+title(sprintf('TDS RSWF spectrogram %s',datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')),'FontSize',12)
 colorbar('off');
 %cb=colorbar;
 %cb.Position=[0.91,0.688,0.01,0.09];
@@ -178,7 +178,7 @@ end
 [tnrtt,tnrden]=caadb_get_solo_rpw_tnr_density(rtime0,4*60*60);
 plot(tnrtt,tnrden,'b','DisplayName','TNR density')
 
-title('Plasma density measured by SolO instruments')
+title('Plasma density measured by SolO instruments','FontSize',12)
 datetick()
 ylabel('Density [cm^-3]')
 xlim([rtime0,rtime1])
@@ -217,7 +217,7 @@ if ~isempty(brtnep)
     datetick('Keeplimits');
     xlim([rtime0,rtime1])
     ylabel('cone angle [deg]')
-    title('MAG RTN angles')
+    title('MAG RTN angles','FontSize',12)
     
     %legend('AutoUpdate','off')
     vertline(epd_time,'black');
@@ -258,7 +258,7 @@ if ~isempty(brtnep)
         xlim([rtime0,rtime1])
         datetick('Keeplimits');
         ylim([0,1])
-        title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]');
+        title('Wave polarization  F=E^2_{\perp}/(E^2_{||} + E^2_{\perp}) [F=1 => transverse, F=0 => linear]','FontSize',12);
         ylabel('E^2_{\perp}/(E^2_{||} + E^2_{\perp})');
         vertline(epd_time,'black');
     end
@@ -266,6 +266,17 @@ end
 
 graph = gcf;
 graph.Position = [100 100 1700 1450];
+% Get handles of all subplots
+h = get(gcf, 'children');
+
+% Loop over subplots and remove XTickLabels except for the bottom one
+for i = 1:length(h)
+    if strcmp(get(h(i), 'type'), 'axes')  % check if this is a subplot
+        if i ~= 1  % check if this is the bottom subplot
+            set(h(i), 'XTickLabel', [])
+        end
+    end
+end
 if opts.autoplot_epd == 1
     saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_autofit_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
 else

@@ -224,10 +224,9 @@ end
 
 
 
-
+[pastt, pasden, vel_rtn] = caadb_get_solo_swa_pas_moments(rtime0,plot_duration); % needed regardless of subplot
 if subplot_conf(5)==1
 subplot(nsplts,1,osplts(5))     % Plasma density
-[pastt, pasden, vel_rtn] = caadb_get_solo_swa_pas_moments(rtime0,plot_duration);
 ylim auto
 hold off
 
@@ -358,11 +357,9 @@ for i = 1:length(h)
         end
     end
 end
-if opts.autoplot_epd == 1
-    saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_autofit_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
-else
-    saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
-end
+
+saveas(graph, ['overview plots' filesep sprintf('TYPE_III_overview_panel_V2_autofit_%s.png',datestr(rtime0,'yyyymmdd_HHMMSS'))])
+
 close(graph)
 
 
