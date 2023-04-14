@@ -28,5 +28,6 @@ for i = 1:size(t3.year)
         r(end+1) = tr; %#ok<SAGROW> 
     end
     rall(end+1) = tr;
+    save('polarisation_array_V04_temp.mat','polarr')
 end
 save('polarisation_array_V04.mat','polarr')

@@ -350,14 +350,14 @@ if exist('f') && ~isempty(f)
                 ratestotalenerg = (dtepd*int_flux'*denerg')/sum(dtepd);
             end
         elseif rtime0>datenum(2021,10,22)
-            [epdep, int_flux, mag_flux, energ_cent, extras] = caadb_get_solo_epd_step_main(tswf.epoch(tswfindex)-30/86400,60);
+            [epdep, int_flux, int_flux_avg, mag_flux, mag_flux_avg, energ_cent, extras] = caadb_get_solo_epd_step_main(tswf.epoch(tswfindex)-30/86400,60);
             if ~isempty(epdep) && 1 < length(epdep)
                 denerg(2:length(energ_cent)) = energ_cent(2:end)-energ_cent(1:end-1);
                 denerg(1)=denerg(2);
 
                 dtepd = (epdep(2:end)-epdep(1:end-1))/86400;
                 dtepd(end+1)=dtepd(end);
-                maintotalenerg = (dtepd*int_flux'*denerg')/sum(dtepd);
+                maintotalenerg = (dtepd*int_flux_avg'*denerg')/sum(dtepd);
             end
         end
         
