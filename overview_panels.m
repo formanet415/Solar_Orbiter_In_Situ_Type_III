@@ -22,11 +22,11 @@ for i = 1:size(t3.year)
     lang_h = t3.langmuir_hour(i);
     lang_m = t3.langmuir_minute(i);
     [tmp, tr] = t3_overview_panel(year, month, day, h, m, epd_nxt, epd_h, epd_m, tswf_nxt, tswf_idx, tswf_fq, lang_nxt, lang_h, lang_m, i, epd_energies, opts);
-    if ~isnan(tmp)
+    if ~isempty(tmp)
         sr = size(tmp);
-        polarr(end+1:end+sr(1),1:16) = tmp;
+        polarr(end+1:end+sr(1),1:18) = tmp;
         r(end+1) = tr; %#ok<SAGROW> 
     end
     rall(end+1) = tr;
 end
-save('polarisation_array_V03.1.mat','polarr')
+save('polarisation_array_V04.mat','polarr')
