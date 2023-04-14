@@ -71,5 +71,5 @@ year	month	day	tds-h	tds-m	epd-nxt epd-h	epd-m	tswfnxt	tswf	fq[kHz]	rswfnxt	rswf
 2022	2	7	19	20	0	20	10	0	412	42	0	21	10
 2022	2	8	16	38	0	17	20	0	nan	nan	0	nan	nan
 2022	2	8	21	45	0	22	45	0	751,752	46	0	nan	nan
-2022	3	5	23	55	1	0	4	1	9:14,17:31	35  0   1	20
+2022	3	5	23	55	1	0	4	1	9:14,17:31	35	0	1	20
 2022	3	6	8	23	0	8	14	0	155:160	36	0	nan	nan
