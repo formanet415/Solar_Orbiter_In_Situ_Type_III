@@ -313,9 +313,15 @@ if exist('f') && ~isempty(f)
         end
         % Magnetic field statistics
         [~, magindex] = min(abs(brtnep-fep(i)));
-        aclockang = mean(clockang(magindex-1:magindex+1));
-        aconeang = mean(coneang(magindex-1:magindex+1));
-        amagfstrength = mean(vecnorm(b_vec(:,magindex-1:magindex+1)));
+        if isnan(magindex) || magindex == 1 
+            aclockang = nan;
+            aconeang = nan;
+            amagfstrength = nan;
+        else
+            aclockang = mean(clockang(magindex-1:magindex+1));
+            aconeang = mean(coneang(magindex-1:magindex+1));
+            amagfstrength = mean(vecnorm(b_vec(:,magindex-1:magindex+1)));
+        end
         
         % Plasma density statistics
         [~, pasindex] = min(abs(pastt-fep(i)));
