@@ -134,7 +134,7 @@ end
 f2 = fit(ttpk(filter)',log(dtpk(filter))','poly1','Weights',exp(linspace(5,1,sum(filter))));
 %figure(1)
 hold on
-scatter(ttpk,dtpk,'magenta')
+scatter(ttpk,dtpk,'black')
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
 if justfit == 0
 xlim([ep0 ep0 + tlen/86400]);

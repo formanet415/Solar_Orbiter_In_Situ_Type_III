@@ -200,7 +200,7 @@ subplot(nsplts,1,osplts(4))
 [mamp_ep, mamp, tmp] = caadb_get_solo_tds_mamp(rtime0,plot_duration);
 if ~isempty(mamp)
     plot(mamp_ep, mamp(1,:)*1e3)
-    set(gca, 'YScale', 'log')
+    %set(gca, 'YScale', 'log')
     
     title(sprintf('TDS MAMP CH%i %s', tmp.channel_cfg(1,1), datestr(rtime0,'yyyy-mm-dd HH:MM:SS.FFF')),'FontSize',12)
     

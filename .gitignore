@@ -11,3 +11,9 @@ overview plots/TYPE_III_overview_panel_autofit*
 events_summary_v01.csv
 events_summary_V02.csv
 events_summary_V03.csv
+plots/waveform*
+plots/hodogram*
+hodograms_oct09.m
+fill_gap_with_nan.m
+tds_get_xld_srf_transform.m
+tdscdf_panel_l2_surv_rswf.m
