@@ -17,6 +17,7 @@ function tds_analyze_type3(filename, type, opts)
 
 
 % Loading data
+caa_data_paths
 cdf = tdscdf_load_l2_surv_tswf(filename);
 ep0 = cdf.epoch(1);
 %rswf = tdscdf_load_l2_surv_rswf(ep0, 1);
@@ -41,8 +42,23 @@ if exist("opts") %#ok<EXIST>
     else
         mode = 0;
     end
+
+    if isfield(opts, 'tnr_time')
+        tnr_time = opts.tnr_time;
+    else
+        tnr_time = 0;
+    end
+
+    if isfield(opts, 'epd_time')
+        epd_time = opts.epd_time;
+    else
+        epd_time = 0;
+    end
 else 
     mode = 0;
+    tnr_time = 0;
+    epd_time = 0;
+    tnr_comp = 2;
 end
 
 if ~exist('type','var') || isempty(type)
@@ -63,6 +79,7 @@ end
 
 % Determine the Langmuir wave polarization
 f = zeros(size(indexes));
+quality = zeros(size(indexes));
 fep = cdf.epoch(indexes);
 t_avg = 0.5/86400;
 for i = 1:length(indexes)
@@ -85,13 +102,14 @@ for i = 1:length(indexes)
     % Project B onto the Y-Z plane
     b = mean(b,2);
     b_yz = b(2:3);
-    quality = vecnorm(b_yz)/vecnorm(b);
+    qual = vecnorm(b_yz)/vecnorm(b);
+    quality(i) = qual;
 
     % FAC transformation
     e_par = b_yz/vecnorm(b_yz);
     e_ort = [e_par(2); -e_par(1)];
 
-    w_par = e_par'*wf/quality;
+    w_par = e_par'*wf/qual;
     w_ort = e_ort'*wf;
     
     % find Langmuir wave peaks for bandpower
@@ -110,6 +128,42 @@ for i = 1:length(indexes)
     p_ort = bandpower(s_ort,fs,[lwfq-2.5e3 lwfq+2.5e3]);
     f(i) = p_ort/(p_par+p_ort);
 end
+
+if tnr_time == 0
+    % Selecting TNR_time
+    ep1 = cdf.epoch(end);
+    tt = 86400*(ep1-ep0);
+    solo_panel_tnr_spectrum(ep0-1/24,tt+1*3600,tnr_comp);
+    disp('Select the beginning of the radio emission')
+    [tnr_time,~] = ginput(1);
+    fprintf('TNR time set to %s\n', datestr(tnr_time))
+end
+
+if epd_time == 0
+    % Selecting EPD_time
+    if ep0<datenum(2021,10,22)
+        solo_panel_epd_step_rates_spectrum(tnr_time-0.25/24,3*3600,'electrons')
+    elseif ep0>datenum(2021,10,22)
+        solo_panel_epd_step_main_spectrum(tnr_time-0.25/24,3*3600,'electrons')
+    end
+    disp('Select the beginning of the electron beam')
+    [epd_time,~] = ginput(1);
+    fprintf('EPD time set to %s\n', datestr(epd_time))
+end
+
+justfit.justfit = 1;
+[ttpks, fit] = t3_auto_fit_electron_vel(epd_time-1/48,3600*2,'electrons',justfit);
+fitep0 = epd_time;
+fitep1 = ttpks(end);
+energs = zeros(size(f));
+for i = 1:length(fep)
+    if ((fep(i)>fitep0)+(fep(i)<fitep1)) == 2
+        energs(i) = exp(fit(fep(i)));
+    else
+        energs(i) = nan;
+    end
+end
+
 
 
 % Subplot setup
