@@ -32,41 +32,44 @@ if ~exist('species','var') || isempty(species)
 end
 
 if exist('opts','var') && ~isempty(opts)
-    if isfield(opts,'colorax')        
-		opts_sp.colorax = opts.colorax;    
+    if isfield(opts,'colorax')
+        opts_sp.colorax = opts.colorax;
     end
-	if isfield(opts,'show_xlabel')
-		show_xlabel = opts.show_xlabel;
+    if isfield(opts,'justfit')
+        justfit = opts.justfit;
+    end
+    if isfield(opts,'show_xlabel')
+        show_xlabel = opts.show_xlabel;
     end
     if isfield(opts,'max_energy')
-		opts_sp.max_freq = opts.max_energy;
+        opts_sp.max_freq = opts.max_energy;
     end
     if isfield(opts,'flux_threshold')
-		threshold = opts.flux_threshold;
+        threshold = opts.flux_threshold;
     end
     if isfield(opts,'show_xticks')
-		opts_sp.show_xticks = opts.show_xticks;
+        opts_sp.show_xticks = opts.show_xticks;
     end
     if isfield(opts,'show_title')
-		show_title = opts.show_title;
-    end    
-	if isfield(opts,'show_colorbar')
-		if (0 == opts.show_colorbar)
+        show_title = opts.show_title;
+    end
+    if isfield(opts,'show_colorbar')
+        if (0 == opts.show_colorbar)
             opts_sp.colorax = 0;
         elseif (0 == opts_sp.colorax)
             opts_sp.colorax = 1;
         end
-	end
-	if isfield(opts,'time_seconds')
+    end
+    if isfield(opts,'time_seconds')
         time_datenum = ~opts.time_seconds;
-	end
+    end
 end
 
 
 if ep0<datenum(2021,10,22)
-[ep, int_flux, mag_flux, energ] = caadb_get_solo_epd_step_rates(ep0, tlen);
+    [ep, int_flux, mag_flux, energ] = caadb_get_solo_epd_step_rates(ep0, tlen);
 elseif ep0>datenum(2021,10,22)
-[ep, ~,int_flux, ~, mag_flux, energ] = caadb_get_solo_epd_step_main(ep0, tlen);
+    [ep, ~,int_flux, ~, mag_flux, energ] = caadb_get_solo_epd_step_main(ep0, tlen);
 end
 
 if (isempty(ep))
@@ -108,14 +111,14 @@ for i = 1:dims(2)
     dtpk = [dtpk energ(loc)'*1e3];
 end
 if justfit==0
-figure(1)
-plot_spectrogram(spn, energ*1e3, ep, opts_sp);
-%figure(2)
-%imagesc(peaks')
-%set(gca,'YDir','normal')
-%figure(3)
-%scatter(ttpk,dtpk)
-%datetick()
+    figure(1)
+    plot_spectrogram(spn, energ*1e3, ep, opts_sp);
+    %figure(2)
+    %imagesc(peaks')
+    %set(gca,'YDir','normal')
+    %figure(3)
+    %scatter(ttpk,dtpk)
+    %datetick()
 end
 try
     f1 = fit(ttpk',log(dtpk)','poly1');
@@ -137,18 +140,18 @@ hold on
 scatter(ttpk,dtpk,'black')
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
 if justfit == 0
-xlim([ep0 ep0 + tlen/86400]);
+    xlim([ep0 ep0 + tlen/86400]);
 
-set(gca,'FontSize',12);
-ylabel(axlabel,'FontSize',12);
-if (show_title)
-    title(sprintf('EPD STEP-MAIN omnidirectional %s %s', titlabel, datestr(ep0,'YYYY-mm-dd HH:MM:SS.FFF')),'FontSize',12);
-end
-if ~show_xlabel
-    xlabel([]);
-end
-datetick()
-hold off
+    set(gca,'FontSize',12);
+    ylabel(axlabel,'FontSize',12);
+    if (show_title)
+        title(sprintf('EPD STEP-MAIN omnidirectional %s %s', titlabel, datestr(ep0,'YYYY-mm-dd HH:MM:SS.FFF')),'FontSize',12);
+    end
+    if ~show_xlabel
+        xlabel([]);
+    end
+    datetick()
+    hold off
 end
 end
 
