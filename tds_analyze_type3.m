@@ -18,7 +18,14 @@ function tds_analyze_type3(filename, type, opts)
 
 % Loading data
 caa_data_paths
-cdf = tdscdf_load_l2_surv_tswf(filename);
+if contains(filename, 'L2')
+    cdf = tdscdf_load_l2_surv_tswf(filename);
+elseif contains(filename, 'L1')
+    cdf = tdscdf_load_l1_surv_tswf(filename);
+else
+    fprintf('Invalid filename\n')
+    return
+end
 ep0 = cdf.epoch(1);
 %rswf = tdscdf_load_l2_surv_rswf(ep0, 1);
 
@@ -54,11 +61,18 @@ if exist("opts") %#ok<EXIST>
     else
         epd_time = 0;
     end
+
+    if isfield(opts, 'usebandpower')
+        usebandpower = opts.usebandpower;
+    else
+        epd_time = 0;
+    end
 else 
     mode = 0;
     tnr_time = 0;
     epd_time = 0;
     tnr_comp = 2;
+    usebandpower = 0;
 end
 
 if ~exist('type','var') || isempty(type)
@@ -68,6 +82,43 @@ else
     if ~any(type == types)
         disp('Wrong type, use "sbm2", "tswf" or "rswf".')
     end
+end
+
+if ~isfield(cdf,'tds_config_label') % Handling of L1 data
+    fprintf('Detected L1 data, performing simple calibration\n')
+    % Obtaining tds_config_label for SRF transformation
+    cdf.tds_config_label = zeros(8,length(cdf.inp_conf));
+    ncomp = 3;
+    data = zeros(ncomp,size(cdf.data,2),size(cdf.data,3));
+    for i = 1:length(cdf.inp_conf)     
+        switch bitand(cdf.inp_conf(i),65535)
+            case 4369
+                cdf.tds_config_label(1:3,i) = 'SE1';
+            case 4098
+                cdf.tds_config_label(1:5,i) = 'DIFF1';
+            case 5122
+                cdf.tds_config_label(1:4,i) = 'XLD1';
+            otherwise
+                fprintf('Unknown tds_config_label, (see get_hf_ch_mask.pro)')
+                return
+        end
+    
+        % Simple calibration
+        calibration = 5;
+        max_data_amp = 32768;
+        [~, cal_fact, ~] = tdsgse_parse_hf_channel_mask(uint32(cdf.inp_conf(i)), calibration, max_data_amp);
+
+        
+        eff_length = tdscdf_get_effective_length(cdf.inp_conf(i));
+        % minus sign is included, because E = - delta V
+        extra_cal = [-1/6,-1/6,-1/6,1]./eff_length;
+        for ich = 1:ncomp
+            wf = cdf.data(ich,:,i); 
+            wf(wf==-32768) = nan; 
+            data(ich, :, i) = extra_cal(ich)*wf*cal_fact(ich)*1e-3; % calibration in V/m
+        end
+    end
+    cdf.data = data;
 end
 
 
@@ -110,23 +161,30 @@ for i = 1:length(indexes)
     e_ort = [e_par(2); -e_par(1)];
 
     w_par = e_par'*wf/qual;
-    w_ort = e_ort'*wf;
+    w_ort = e_ort'*wf/(2/pi);
     
-    % find Langmuir wave peaks for bandpower
-    s_par = fft(w_par); s_ort = fft(w_ort);
-    n = length(w_par);                                  % number of samples
-    freq = (0:n-1)*(fs/n);                              % frequency range
-    mask = ((freq>10e3) + (freq<70e3) == 2);
-    s_par = abs(s_par(mask)).^2/n; s_ort = abs(s_ort(mask)).^2/n;   % power of the DFT
-    freq = freq(mask);
-    [~,locs_per,~,~] = findpeaks(s_par,'SortStr','descend');  
-    [~,locs_ort,~,~] = findpeaks(s_ort,'SortStr','descend'); 
-    lwfq = mean([freq(locs_per(1)),freq(locs_ort(1))]);
+    if usebandpower == 1
+        % find Langmuir wave peaks for bandpower
+        s_par = fft(w_par); s_ort = fft(w_ort);
+        n = length(w_par);                                  % number of samples
+        freq = (0:n-1)*(fs/n);                              % frequency range
+        mask = ((freq>10e3) + (freq<70e3) == 2);
+        s_par = abs(s_par(mask)).^2/n; s_ort = abs(s_ort(mask)).^2/n;   % power of the DFT
+        freq = freq(mask);
+        [~,locs_per,~,~] = findpeaks(s_par,'SortStr','descend');
+        [~,locs_ort,~,~] = findpeaks(s_ort,'SortStr','descend');
+        lwfq = mean([freq(locs_per(1)),freq(locs_ort(1))]);
 
-    % calculate energy of the Langmuir wave components
-    p_par = bandpower(s_par,fs,[lwfq-2.5e3 lwfq+2.5e3]);
-    p_ort = bandpower(s_ort,fs,[lwfq-2.5e3 lwfq+2.5e3]);
-    f(i) = p_ort/(p_par+p_ort);
+        % calculate energy of the Langmuir wave components
+        p_par = bandpower(s_par,fs,[lwfq-2.5e3 lwfq+2.5e3]);
+        p_ort = bandpower(s_ort,fs,[lwfq-2.5e3 lwfq+2.5e3]);
+        f(i) = p_ort/(p_par+p_ort);
+    else
+        f(i) = std(w_ort,'omitnan')^2/(std(w_ort,'omitnan')^2+std(w_par,'omitnan')^2);
+        if isnan(f(i))
+            disp('this should not happen')
+        end
+    end
 end
 
 if tnr_time == 0
