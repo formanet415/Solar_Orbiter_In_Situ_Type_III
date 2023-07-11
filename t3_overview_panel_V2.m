@@ -3,50 +3,50 @@ function [polarray, r] = t3_overview_panel_V2(tnr_time, epd_time, tswf_idx, opts
 %them and saves panels with the data
 
 [year, month, day, h, m, ~] = datevec(tnr_time);
-if exist("opts") %#ok<EXIST>
-    if isfield(opts, 'epd_nxt')
-        epd_nxt = opts.epd_nxt;
-    else
-        epd_nxt = 0;
-    end
-    
-    if isfield(opts, 'tswf_nxt')
-        tswf_nxt = opts.tswf_nxt;
-    else
-        tswf_nxt = 0;
-    end
 
-    if isfield(opts, 'lang_nxt')
-        lang_nxt = opts.lang_nxt;
-    else
-        lang_nxt = 0;
-    end
-
-    if isfield(opts, 'subplot_conf')
-        subplot_conf = opts.subplot_conf;
-    else
-        subplot_conf = [1 1 1 1 1 1 1];
-    end
-    if isfield(opts, 'subplot_conf_osplts')
-        osplts = opts.subplot_conf_osplts;
-    else
-        osplts = [1 2 3 4 5 6 7]; % default order of subplots BE ADVISED the last two magnetic dependent subplots should not be placed above any other subplots, that will break the subplots
-        %[2 3 5 6 7 1 4]
-    end
-
-    if isfield(opts, 'tds_max_freq')
-        tds_max_freq = opts.tds_max_freq; % In kHz
-    end
-    
-    if isfield(opts, 'verbose')
-        verbose = opts.verbose;
-    end
-    if isfield(opts, 'plot_duration')
-        plot_duration = opts.plot_duration;
-    else
-    plot_duration = 4*3600;
-    end
+if exist("opts") && isfield(opts, 'epd_nxt') %#ok<EXIST>
+    epd_nxt = opts.epd_nxt;
+else
+    epd_nxt = 0;
 end
+
+if exist("opts") && isfield(opts, 'tswf_nxt') %#ok<EXIST>
+    tswf_nxt = opts.tswf_nxt;
+else
+    tswf_nxt = 0;
+end
+
+if exist("opts") && isfield(opts, 'lang_nxt') %#ok<EXIST>
+    lang_nxt = opts.lang_nxt;
+else
+    lang_nxt = 0;
+end
+
+if exist("opts") && isfield(opts, 'subplot_conf') %#ok<EXIST>
+    subplot_conf = opts.subplot_conf;
+else
+    subplot_conf = [1 1 1 1 1 1 1];
+end
+if exist("opts") && isfield(opts, 'subplot_conf_osplts') %#ok<EXIST>
+    osplts = opts.subplot_conf_osplts;
+else
+    osplts = [1 2 3 4 5 6 7]; % default order of subplots BE ADVISED the last two magnetic dependent subplots should not be placed above any other subplots, that will break the subplots
+    %[2 3 5 6 7 1 4]
+end
+
+if exist("opts") && isfield(opts, 'tds_max_freq') %#ok<EXIST>
+    tds_max_freq = opts.tds_max_freq; % In kHz
+end
+
+if exist("opts") && isfield(opts, 'verbose') %#ok<EXIST>
+    verbose = opts.verbose;
+end
+if exist("opts") && isfield(opts, 'plot_duration') %#ok<EXIST>
+    plot_duration = opts.plot_duration;
+else
+    plot_duration = 4*3600;
+end
+
 
 caa_data_paths;
 % good configuration for < 7 subplots:

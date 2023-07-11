@@ -136,6 +136,10 @@ if sum(filter)<10
 end
 f2 = fit(ttpk(filter)',log(dtpk(filter))','poly1','Weights',exp(linspace(5,1,sum(filter))));
 %figure(1)
+if f2.p1>0
+    disp('fitting failed, p1 positive')
+    return
+end
 hold on
 scatter(ttpk,dtpk,'black')
 plot(ttpk,exp(f2(ttpk)),'b','LineWidth',5);
