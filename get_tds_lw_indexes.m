@@ -7,7 +7,7 @@ function [indexes] = get_tds_lw_indexes(cdf, type, mode)
 %  Input
 %   cdf - the tds data in a structure
 %
-%   type - 'sbm2', 'tswf', 'rpw' (used to categorize data in the database),
+%   type - 'sbm1', 'sbm2', 'tswf', 'rpw' (used to categorize data in the database),
 %    if left empty, mode 2 is triggered
 %
 %   mode - There are three modes.
@@ -20,9 +20,9 @@ function [indexes] = get_tds_lw_indexes(cdf, type, mode)
 if ~exist('type','var') || isempty(type)
     column = 0;
 else
-    types = ["sbm2", "tswf", "rswf"];
+    types = ["sbm1", "sbm2", "tswf", "rswf"];
     if ~any(type == types)
-        disp('Wrong type, use "sbm2", "tswf" or "rswf".')
+        disp('Wrong type, use "sbm1", "sbm2", "tswf" or "rswf".')
     end
 end
 switch type
@@ -32,6 +32,8 @@ switch type
         column = 3;
     case "rswf"
         column = 4;
+    case "sbm1"
+        column = 5;
 end
 
 
