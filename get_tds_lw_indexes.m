@@ -77,7 +77,7 @@ for i = 1:nsnaps
         % Extract waveform for current channel and waveform index
         wf = wfs(j, 1:cdf.samples_per_ch(i), i);
         if mode==1
-            prom = 0.0000005;
+            prom = 0.000001;
         elseif mode == 2
             prom = 0.00005;
         end
