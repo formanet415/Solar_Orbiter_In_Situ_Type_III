@@ -17,3 +17,6 @@ hodograms_oct09.m
 fill_gap_with_nan.m
 tds_get_xld_srf_transform.m
 tdscdf_panel_l2_surv_rswf.m
+plots/VDFsOct9.fig
+simulate_projection.m
+inexessbm2l1.mat
