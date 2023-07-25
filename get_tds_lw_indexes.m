@@ -45,7 +45,7 @@ indexes = [];
 
 % Load from database
 load('tds_lw_indexes.mat'); %#ok<LOAD>
-ep0 = cdf.epoch(1);
+ep0 = fix(mean(cdf.epoch)); % this is a bit stupid, sometimes the cdf file starts on the previous day
 if mode == 0
     [~,row] = find([lw_indexes{:}] == ep0); %#ok<NODEF>
     if isempty(row)
@@ -77,7 +77,7 @@ for i = 1:nsnaps
         % Extract waveform for current channel and waveform index
         wf = wfs(j, 1:cdf.samples_per_ch(i), i);
         if mode==1
-            prom = 0.000005;
+            prom = 0.0000005;
         elseif mode == 2
             prom = 0.00005;
         end
@@ -105,10 +105,10 @@ for i = 1:nsnaps
 
             [pks,locs,w,~] = findpeaks(spec,'MinPeakProminence',prom, 'MinPeakDistance',50, 'MinPeakWidth', 1); %#ok<ASGLU>
             freqs = f(locs);
-            mask = (freqs<70e3) + (freqs>10e3) == 2;
+            mask = (freqs<70e3) + (freqs>15e3) == 2;
             freqs = freqs(mask);
             %disp(w(mask))
-            if length(pks(mask))>10 && descendingSortingScore(pks(mask))>0.8 % eliminates strong dust (or missing data in L2)
+            if length(pks(mask))>7 && descendingSortingScore(pks(mask))>0.8 % eliminates strong dust (or missing data in L2)
                 break
             end
 
